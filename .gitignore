@@ -1,2 +1,4 @@
 # modules
 /node_modules
+/build
+/.vscode
