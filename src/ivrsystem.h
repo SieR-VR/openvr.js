@@ -74,7 +74,7 @@ private:
     // virtual vr::TrackedDeviceIndex_t GetTrackedDeviceIndexForControllerRole( vr::ETrackedControllerRole unDeviceType )
     static void GetTrackedDeviceIndexForControllerRole(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual vr::ETrackedControllerRole GetControllerRoleForTrackedDeviceIndex( vr::TrackedDeviceIndex_t unDeviceIndex )
-    static void GetControllerRoleForTrackedDeviceIndex(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void GetControllerRoleForTrackedDeviceIndex(const Nan::FunctionCallbackInfo<Value> &info);
 
     // ------------------------------------
     // Property methods
@@ -95,44 +95,44 @@ private:
     // virtual HmdMatrix34_t GetMatrix34TrackedDeviceProperty( vr::TrackedDeviceIndex_t unDeviceIndex, ETrackedDeviceProperty prop, ETrackedPropertyError *pError = 0L )
     static void GetMatrix34TrackedDeviceProperty(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual uint32_t GetArrayTrackedDeviceProperty( vr::TrackedDeviceIndex_t unDeviceIndex, ETrackedDeviceProperty prop, PropertyTypeTag_t propType, void *pBuffer, uint32_t unBufferSize, ETrackedPropertyError *pError = 0L )
-    static void GetArrayTrackedDeviceProperty(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void GetArrayTrackedDeviceProperty(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual uint32_t GetStringTrackedDeviceProperty( vr::TrackedDeviceIndex_t unDeviceIndex, ETrackedDeviceProperty prop, VR_OUT_STRING() char *pchValue, uint32_t unBufferSize, ETrackedPropertyError *pError = 0L )
-    static void GetStringTrackedDeviceProperty(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void GetStringTrackedDeviceProperty(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual const char *GetPropErrorNameFromEnum( ETrackedPropertyError error )
-    static void GetPropErrorNameFromEnum(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void GetPropErrorNameFromEnum(const Nan::FunctionCallbackInfo<Value> &info);
 
     // ------------------------------------
     // Event methods
     // ------------------------------------
 
     // virtual bool PollNextEvent( VREvent_t *pEvent, uint32_t uncbVREvent )
-    static void PollNextEvent(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void PollNextEvent(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual bool PollNextEventWithPose( ETrackingUniverseOrigin eOrigin, VREvent_t *pEvent, uint32_t uncbVREvent, vr::TrackedDevicePose_t *pTrackedDevicePose )
-    static void PollNextEventWithPose(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void PollNextEventWithPose(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual const char *GetEventTypeNameFromEnum( EVREventType eType )
-    static void GetEventTypeNameFromEnum(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void GetEventTypeNameFromEnum(const Nan::FunctionCallbackInfo<Value> &info);
 
     // ------------------------------------
     // Rendering helper methods
     // ------------------------------------
 
     // virtual HiddenAreaMesh_t GetHiddenAreaMesh( EVREye eEye, EHiddenAreaMeshType type = k_eHiddenAreaMesh_Standard )
-    static void GetHiddenAreaMesh(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void GetHiddenAreaMesh(const Nan::FunctionCallbackInfo<Value> &info);
 
     // ------------------------------------
     // Controller methods
     // ------------------------------------
 
     // virtual bool GetControllerState( vr::TrackedDeviceIndex_t unControllerDeviceIndex, vr::VRControllerState_t *pControllerState, uint32_t unControllerStateSize )
-    static void GetControllerState(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void GetControllerState(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual bool GetControllerStateWithPose( ETrackingUniverseOrigin eOrigin, vr::TrackedDeviceIndex_t unControllerDeviceIndex, vr::VRControllerState_t *pControllerState, uint32_t unControllerStateSize, TrackedDevicePose_t *pTrackedDevicePose )
-    static void GetControllerStateWithPose(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void GetControllerStateWithPose(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual void TriggerHapticPulse( vr::TrackedDeviceIndex_t unControllerDeviceIndex, uint32_t unAxisId, unsigned short usDurationMicroSec )
-    static void TriggerHapticPulse(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void TriggerHapticPulse(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual const char *GetButtonIdNameFromEnum( EVRButtonId eButtonId )
-    static void GetButtonIdNameFromEnum(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void GetButtonIdNameFromEnum(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual const char *GetControllerAxisTypeNameFromEnum( EVRControllerAxisType eAxisType )
-    static void GetControllerAxisTypeNameFromEnum(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void GetControllerAxisTypeNameFromEnum(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual bool IsInputAvailable()
     static void IsInputAvailable(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual bool IsSteamVRDrawingControllers()
@@ -161,14 +161,14 @@ private:
     // -------------------------------------
 
     // virtual uint32_t GetAppContainerFilePaths( VR_OUT_STRING() char *pchBuffer, uint32_t unBufferSize )
-    static void GetAppContainerFilePaths(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void GetAppContainerFilePaths(const Nan::FunctionCallbackInfo<Value> &info);
 
     // -------------------------------------
     // System methods
     // -------------------------------------
 
     // virtual const char *GetRuntimeVersion()
-    static void GetRuntimeVersion(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void GetRuntimeVersion(const Nan::FunctionCallbackInfo<Value> &info);
 
     static Nan::Persistent<v8::Function> constructor;
     vr::IVRSystem * const self_;

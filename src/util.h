@@ -148,6 +148,49 @@ v8::Local<v8::Value> encode(const vr::TrackedDeviceIndex_t &value)
     return Nan::New<v8::Number>(value);
 }
 
+//=========================================================
+template <>
+v8::Local<v8::Value> encode(const vr::TrackedDevicePose_t &value)
+{
+    Nan::EscapableHandleScope scope;
+    auto result = Nan::New<v8::Object>();
+
+    auto deviceToAbsoluteTracking_prop =
+        Nan::New<v8::String>("deviceToAbsoluteTracking").ToLocalChecked();
+    Nan::Set(
+        result, deviceToAbsoluteTracking_prop,
+        encode(value.mDeviceToAbsoluteTracking));
+
+    auto velocity_prop =
+        Nan::New<v8::String>("velocity").ToLocalChecked();
+    Nan::Set(result, velocity_prop, encode(value.vVelocity));
+
+    auto angularVelocity_prop =
+        Nan::New<v8::String>("angularVelocity").ToLocalChecked();
+    Nan::Set(result, angularVelocity_prop, encode(value.vAngularVelocity));
+
+    auto trackingResult_prop =
+        Nan::New<v8::String>("trackingResult").ToLocalChecked();
+    Nan::Set(
+        result, trackingResult_prop,
+        Nan::New<v8::Number>(static_cast<uint32_t>(value.eTrackingResult)));
+
+    auto poseIsValid_prop =
+        Nan::New<v8::String>("poseIsValid").ToLocalChecked();
+    Nan::Set(
+        result, poseIsValid_prop,
+        Nan::New<v8::Boolean>(value.bPoseIsValid));
+
+    auto deviceIsConnected_prop =
+        Nan::New<v8::String>("deviceIsConnected").ToLocalChecked();
+    Nan::Set(
+        result, deviceIsConnected_prop,
+        Nan::New<v8::Boolean>(value.bDeviceIsConnected));
+
+    return scope.Escape(result);
+}
+
+//=========================================================
 template <>
 vr::TrackedDevicePose_t decode(const v8::Local<v8::Value> value, v8::Isolate *isolate)
 {
@@ -190,6 +233,7 @@ vr::TrackedDevicePose_t decode(const v8::Local<v8::Value> value, v8::Isolate *is
     return result;
 }
 
+//=========================================================
 template <typename T>
 v8::Local<v8::Value> encode(const T &value, uint32_t nDeviceIndices)
 {
@@ -203,6 +247,7 @@ v8::Local<v8::Value> encode(const T &value, uint32_t nDeviceIndices)
     return scope.Escape(result);
 }
 
+//=========================================================
 template <typename T>
 v8::Local<v8::Value> encode(const T &value)
 {
