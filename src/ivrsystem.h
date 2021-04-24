@@ -171,7 +171,7 @@ private:
     // static void GetRuntimeVersion(const Nan::FunctionCallbackInfo<Value> &info);
 
     static Nan::Persistent<v8::Function> constructor;
-    vr::IVRSystem * const self_;
+    vr::IVRSystem *const self_;
 };
 
 #endif
