@@ -1400,16 +1400,74 @@ export namespace vr {
     export const VR_GetVRInitErrorAsSymbol = function (error: EVRInitError): string { return openvr.VR_GetVRInitErrorAsSymbol(); }
     export const VR_GetVRInitErrorAsEnglishDescription = function (error: EVRInitError): string { return openvr.VR_GetVRInitErrorAsEnglishDescription(); }
     // export const VR_GetGenericInterface = function( sInterfaceVersion: string ): any { return openvr.VR_GetGenericInterface(); }
-    //export const VR_IsInterfaceVersionValid = function( sInterfaceVersion: string ): boolean { return openvr.VR_IsInterfaceVersionValid(); }
+    // export const VR_IsInterfaceVersionValid = function( sInterfaceVersion: string ): boolean { return openvr.VR_IsInterfaceVersionValid(); }
     export const VR_GetInitToken = function (): number { return openvr.VR_GetInitToken(); }
 
 
     export class IVRSystem {
-        GetRecommendedRenderTargetSize(): { width: number, height: number } {
-            return openvr.IVRSystem.GetRecommendedRenderTargetSize();
+
+        // ------------------------------------
+        // Display Methods
+        // ------------------------------------
+
+        GetRecommendedRenderTargetSize(): { width: number, height: number } { return openvr.IVRSystem.GetRecommendedRenderTargetSize(); }
+        GetProjectionMatrix(eEye: EVREye, fNearZ: number, fFarZ: number): HmdMatrix44_t { return openvr.IVRSystem.GetProjectionMatrix(eEye, fNearZ, fFarZ); }
+        GetProjectionRaw(eEye: EVREye): { left: number, right: number, top: number, bottom: number } { return openvr.IVRSystem.GetProjectionRaw(eEye); }
+        ComputeDistortion(eEye: EVREye, fU: number, fV: number): DistortionCoordinates_t { return openvr.IVRSystem.ComputeDistortion(eEye, fU, fV); }
+        GetEyeToHeadTransform(eEye: EVREye): HmdMatrix34_t { return openvr.IVRSystem.GetEyeToHeadTransform(eEye); }
+        GetTimeSinceLastVsync(): { seconds: number, frame: number } { return openvr.IVRSystem.GetTimeSinceLastVsync(); }
+        GetD3D9AdapterIndex(): number { return openvr.IVRSystem.GetD3D9AdapterIndex(); }
+        GetDXGIOutputInfo(): number { return openvr.IVRSystem.GetDXGIOutputInfo(); }
+        GetOutputDevice(textureType: ETextureType): number { return openvr.IVRSystem.GetOutputDevice(); } 
+
+        // ------------------------------------
+        // Display Mode methods
+        // ------------------------------------
+
+        IsDisplayOnDesktop(): boolean { return openvr.IVRSystem.IsDisplayOnDesktop(); }
+        SetDisplayVisibility(bIsVisibleOnDesktop: boolean): boolean { return openvr.IVRSystem.SetDisplayVisibility(); }
+
+        // ------------------------------------
+        // Tracking Methods
+        // ------------------------------------
+
+        GetDeviceToAbsoluteTrackingPose(eOrigin: ETrackingUniverseOrigin, fPredictedSecondsToPhotonsFromNow: number): TrackedDevicePose_t[] { return openvr.IVRSystem.GetDeviceToAbsoluteTrackingPose(eOrigin, fPredictedSecondsToPhotonsFromNow ); }
+        GetSeatedZeroPoseToStandingAbsoluteTrackingPose(): HmdMatrix34_t { return openvr.IVRSystem.GetSeatedZeroPoseToStandingAbsoluteTrackingPose(); }
+        GetRawZeroPoseToStandingAbsoluteTrackingPose(): HmdMatrix34_t { return openvr.IVRSystem.GetRawZeroPoseToStandingAbsoluteTrackingPose(); }
+        GetSortedTrackedDeviceIndicesOfClass(eTrackedDeviceClass: ETrackedDeviceClass, unRelativeToTrackedDeviceIndex?: ETrackedDeviceClass): TrackedDeviceIndex_t[] { 
+            if(unRelativeToTrackedDeviceIndex === undefined) return openvr.IVRSystem.GetSortedTrackedDeviceIndicesOfClass(eTrackedDeviceClass, 0);
+            else return openvr.IVRSystem.GetSortedTrackedDeviceIndicesOfClass(eTrackedDeviceClass, unRelativeToTrackedDeviceIndex);
         }
-        GetProjectionMatrix(eEye: EVREye, fNearZ: number, fFarZ: number): HmdMatrix44_t {
-            return openvr.IVRSystem.GetProjectionMatrix(eEye, fNearZ, fFarZ);
-        }
+        GetTrackedDeviceActivityLevel(unDeviceId: TrackedDeviceIndex_t): EDeviceActivityLevel { return openvr.IVRSystem.GetTrackedDeviceActivityLevel(unDeviceId); }
+        ApplyTransform(trackedDevicePose: TrackedDevicePose_t, transform: HmdMatrix34_t): TrackedDevicePose_t { return openvr.IVRSystem.ApplyTransform(trackedDevicePose, transform); }
+        GetTrackedDeviceIndexForControllerRole(nDeviceType: ETrackedControllerRole): TrackedDeviceIndex_t { return openvr.IVRSystem.GetTrackedDeviceIndexForControllerRole(nDeviceType); }
+
+        // ------------------------------------
+        // Property methods
+        // ------------------------------------
+
+        GetTrackedDeviceClass(unDeviceIndex: TrackedDeviceIndex_t): ETrackedDeviceClass { return openvr.IVRSystem.GetTrackedDeviceClass(unDeviceIndex); }
+        IsTrackedDeviceConnected(unDeviceIndex: TrackedDeviceIndex_t): boolean { return openvr.IVRSystem.IsTrackedDeviceConnected(unDeviceIndex); }
+        GetBoolTrackedDeviceProperty(nDeviceIndex: TrackedDeviceIndex_t, nDeviceProp: ETrackedDeviceProperty): boolean { return openvr.IVRSystem.GetBoolTrackedDeviceProperty(nDeviceIndex, nDeviceProp); }
+        GetFloatTrackedDeviceProperty(nDeviceIndex: TrackedDeviceIndex_t, nDeviceProp: ETrackedDeviceProperty): number { return openvr.IVRSystem.GetFloatTrackedDeviceProperty(nDeviceIndex, nDeviceProp); }
+        GetInt32TrackedDeviceProperty(nDeviceIndex: TrackedDeviceIndex_t, nDeviceProp: ETrackedDeviceProperty): number { return openvr.IVRSystem.GetInt32TrackedDeviceProperty(nDeviceIndex, nDeviceProp); }
+        GetUint64TrackedDeviceProperty(nDeviceIndex: TrackedDeviceIndex_t, nDeviceProp: ETrackedDeviceProperty): number { return openvr.IVRSystem.GetUint64TrackedDeviceProperty(nDeviceIndex, nDeviceProp); }
+        GetMatrix34TrackedDeviceProperty(nDeviceIndex: TrackedDeviceIndex_t, nDeviceProp: ETrackedDeviceProperty): HmdMatrix34_t { return openvr.IVRSystem.GetMatrix34TrackedDeviceProperty(nDeviceIndex, nDeviceProp); }
+
+        // ------------------------------------
+        // Controller methods
+        // ------------------------------------
+
+        IsInputAvailable(): boolean { return openvr.IVRSystem.IsInputAvailable(); }
+        IsSteamVRDrawingControllers(): boolean { return openvr.IVRSystem.IsSteamVRDrawingControllers(); }
+        ShouldApplicationPause(): boolean { return openvr.IVRSystem.ShouldApplicationPause(); }
+        ShouldApplicationReduceRenderingWork(): boolean { return openvr.IVRSystem.ShouldApplicationReduceRenderingWork(); }
+
+        // ------------------------------------
+        // Firmware methods
+        // ------------------------------------
+
+        PerformFirmwareUpdate(uiTrackedDeviceIndex: TrackedDeviceIndex_t): EVRFirmwareError { return openvr.IVRSystem.PerformFirmwareUpdate(uiTrackedDeviceIndex); }
+        AcknowledgeQuit_Exiting(): void { openvr.IVRSystem.AcknowledgeQuit_Exiting(); }
     }
 }
