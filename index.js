@@ -1,4 +1,6 @@
-const vr = require('bindings')('openvr');
+import { vr } from './dist/vrtypes.js'
 
-vr.VR_Init(2);
-console.log(vr.VR_IsRuntimeInstalled());
+const IVRSystem = vr.VR_Init(vr.EVRApplicationType.VRApplication_Overlay);
+console.log(IVRSystem);
+
+console.log(IVRSystem.GetProjectionMatrix(vr.EVREye.Eye_Left, 1, 1));

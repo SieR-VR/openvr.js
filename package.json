@@ -2,7 +2,8 @@
   "name": "openvr.js",
   "version": "0.1.0",
   "description": "A implementation of OpenVR in Node.js",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,14 +12,16 @@
     "url": "git+https://github.com/SieR-VR/OpenVR.js.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "SieR-VR",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/SieR-VR/OpenVR.js/issues"
   },
   "homepage": "https://github.com/SieR-VR/OpenVR.js#readme",
   "dependencies": {
+    "@types/bindings": "^1.5.0",
     "bindings": "^1.5.0",
     "nan": "^2.14.2"
-  }
+  },
+  "type": "module"
 }

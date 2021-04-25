@@ -1,3 +1,6 @@
+import bindings from 'bindings';
+const openvr = bindings('openvr')
+
 export namespace vr {
     // version.h
     export const k_nSteamVRVersionMajor: number = 1;
@@ -1388,4 +1391,25 @@ export namespace vr {
         vGyro: HmdVector3_t;
         unOffScaleFlags: number;
     };
+
+    export const VR_Init = function (eApplicationType: EVRApplicationType): IVRSystem { return openvr.VR_Init(eApplicationType); }
+    export const VR_Shutdown = function (): void { openvr.VR_Shutdown(); }
+    export const VR_IsHmdPresent = function (): boolean { return openvr.VR_IsHmdPresent(); }
+    export const VR_IsRuntimeInstalled = function (): boolean { return openvr.VR_IsRuntimeInstalled(); }
+    export const VR_GetRuntimePath = function (): string { return openvr.VR_GetRuntimePath(); }
+    export const VR_GetVRInitErrorAsSymbol = function (error: EVRInitError): string { return openvr.VR_GetVRInitErrorAsSymbol(); }
+    export const VR_GetVRInitErrorAsEnglishDescription = function (error: EVRInitError): string { return openvr.VR_GetVRInitErrorAsEnglishDescription(); }
+    // export const VR_GetGenericInterface = function( sInterfaceVersion: string ): any { return openvr.VR_GetGenericInterface(); }
+    //export const VR_IsInterfaceVersionValid = function( sInterfaceVersion: string ): boolean { return openvr.VR_IsInterfaceVersionValid(); }
+    export const VR_GetInitToken = function (): number { return openvr.VR_GetInitToken(); }
+
+
+    export class IVRSystem {
+        GetRecommendedRenderTargetSize(): { width: number, height: number } {
+            return openvr.IVRSystem.GetRecommendedRenderTargetSize();
+        }
+        GetProjectionMatrix(eEye: EVREye, fNearZ: number, fFarZ: number): HmdMatrix44_t {
+            return openvr.IVRSystem.GetProjectionMatrix(eEye, fNearZ, fFarZ);
+        }
+    }
 }
