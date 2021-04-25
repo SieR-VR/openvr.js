@@ -11,7 +11,7 @@ namespace vr
     class IVRApplications;
 }
 
-class IVRApplications : Nan::ObjectWrap
+class IVRApplications : public Nan::ObjectWrap
 {
 public:
     static void Init(Local<Object> exports);
