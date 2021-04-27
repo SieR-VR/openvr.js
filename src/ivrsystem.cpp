@@ -108,12 +108,6 @@ void IVRSystem::New(const Nan::FunctionCallbackInfo<Value> &info)
         return;
     }
 
-    if (info.Length() != 1 || !info[0]->IsExternal())
-    {
-        Nan::ThrowTypeError("Argument[0] must be an `IVRSystem*`.");
-        return;
-    }
-
     auto wrapped_instance = static_cast<vr::IVRSystem *>(
         Local<External>::Cast(info[0])->Value());
     IVRSystem *obj = new IVRSystem(wrapped_instance);

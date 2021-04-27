@@ -41,7 +41,7 @@ private:
     // virtual EVROverlayError SetOverlayName( VROverlayHandle_t ulOverlayHandle, const char *pchName ) = 0;
     static void SetOverlayName(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual EVROverlayError GetOverlayImageData( VROverlayHandle_t ulOverlayHandle, void *pvBuffer, uint32_t unBufferSize, uint32_t *punWidth, uint32_t *punHeight ) = 0;
-    static void GetOverlayImageData(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void GetOverlayImageData(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual const char *GetOverlayErrorNameFromEnum( EVROverlayError error ) = 0;
     static void GetOverlayErrorNameFromEnum(const Nan::FunctionCallbackInfo<Value> &info);
 
