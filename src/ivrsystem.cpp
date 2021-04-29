@@ -335,11 +335,6 @@ void IVRSystem::GetSortedTrackedDeviceIndicesOfClass(const Nan::FunctionCallback
     }
 
     uint32_t nTrackedDeviceClass = info[0]->Uint32Value(context).FromJust();
-    if (nTrackedDeviceClass >= 6)
-    {
-        Nan::ThrowTypeError("Argument[0] was out of enum range (ETrackedDeviceClass).");
-        return;
-    }
 
     vr::TrackedDeviceIndex_t unRelativeToTrackedDeviceIndex = 0;
     if (!info[1]->IsUndefined())

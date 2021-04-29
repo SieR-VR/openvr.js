@@ -248,6 +248,28 @@ v8::Local<v8::Value> encode(const T &value, uint32_t nDeviceIndices)
 }
 
 //=========================================================
+template<>
+vr::VRTextureBounds_t decode(const v8::Local<v8::Value> value, v8::Isolate *isolate)
+{
+    vr::VRTextureBounds_t result;
+    const auto object = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+
+    auto uMin_prop = Nan::New<v8::String>("uMin").ToLocalChecked();
+    result.uMin = Nan::Get(object, uMin_prop).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).FromJust();
+
+    auto uMax_prop = Nan::New<v8::String>("uMax").ToLocalChecked();
+    result.uMax = Nan::Get(object, uMax_prop).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).FromJust();
+
+    auto vMax_prop = Nan::New<v8::String>("vMax").ToLocalChecked();
+    result.vMax = Nan::Get(object, vMax_prop).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).FromJust();
+
+    auto vMin_prop = Nan::New<v8::String>("vMin").ToLocalChecked();
+    result.vMin = Nan::Get(object, vMin_prop).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).FromJust();
+
+    return result;
+}
+
+//=========================================================
 template <typename T>
 v8::Local<v8::Value> encode(const T &value)
 {
