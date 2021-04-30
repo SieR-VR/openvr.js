@@ -103,6 +103,35 @@ vr::HmdVector3_t decode(const v8::Local<v8::Value> value, v8::Isolate *isolate)
 
 //=========================================================
 template <>
+v8::Local<v8::Value> encode(const vr::HmdVector2_t &value)
+{
+    Nan::EscapableHandleScope scope;
+    auto result = Nan::New<v8::Array>();
+
+    for (uint32_t idx = 0; idx < 2; ++idx)
+        Nan::Set(result, idx, Nan::New<v8::Number>(value.v[idx]));
+
+    return scope.Escape(result);
+}
+
+//=========================================================
+template <>
+vr::HmdVector2_t decode(const v8::Local<v8::Value> value, v8::Isolate *isolate)
+{
+    vr::HmdVector2_t result;
+    const auto array = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+
+    for (uint32_t idx = 0; idx < 2; ++idx)
+    {
+        const auto cell = Nan::Get(array, idx).ToLocalChecked();
+        result.v[idx] = static_cast<float>(cell->NumberValue(isolate->GetCurrentContext()).FromJust());
+    }
+
+    return result;
+}
+
+//=========================================================
+template <>
 v8::Local<v8::Value> encode(const vr::DistortionCoordinates_t &value)
 {
     Nan::EscapableHandleScope scope;
@@ -265,6 +294,50 @@ vr::VRTextureBounds_t decode(const v8::Local<v8::Value> value, v8::Isolate *isol
 
     auto vMin_prop = Nan::New<v8::String>("vMin").ToLocalChecked();
     result.vMin = Nan::Get(object, vMin_prop).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).FromJust();
+
+    return result;
+}
+
+//=========================================================
+template <typename T>
+v8::Local<v8::Value> encode(const vr::VRTextureBounds_t textureBounds)
+{
+    Nan::EscapableHandleScope scope;
+    auto result = Nan::New<v8::Object>();
+
+    auto uMin_prop = Nan::New<v8::String>("uMin").ToLocalChecked();
+    Nan::Set(result, uMin_prop, Nan::New<v8::Number>(textureBounds.uMin);
+
+    auto uMax_prop = Nan::New<v8::String>("uMax").ToLocalChecked();
+    Nan::Set(result, uMax_prop, Nan::New<v8::Number>(textureBounds.uMax);
+
+    auto vMax_prop = Nan::New<v8::String>("vMax").ToLocalChecked();
+    Nan::Set(result, vMax_prop, Nan::New<v8::Number>(textureBounds.vMax));
+
+    auto vMin_prop = Nan::New<v8::String>("vMin").ToLocalChecked();
+    Nan::Set(result, vMin_prop, Nan::New<v8::Number>(textureBounds.vMin);
+
+    return scope.Escape(result);
+}
+
+//=========================================================
+template<>
+vr::VROverlayProjection_t decode(const v8::Local<v8::Value> value, v8::Isolate *isolate)
+{
+    vr::VROverlayProjection_t result;
+    const auto object = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+
+    auto fBottom_prop = Nan::New<v8::String>("fBottom").ToLocalChecked();
+    result.fBottom = Nan::Get(object, fBottom_prop).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).FromJust();
+
+    auto fLeft_prop = Nan::New<v8::String>("fLeft").ToLocalChecked();
+    result.fLeft = Nan::Get(object, fLeft_prop).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).FromJust();
+
+    auto fRight_prop = Nan::New<v8::String>("fRight").ToLocalChecked();
+    result.fRight = Nan::Get(object, fRight_prop).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).FromJust();
+
+    auto fTop_prop = Nan::New<v8::String>("fTop").ToLocalChecked();
+    result.fTop = Nan::Get(object, fTop_prop).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).FromJust();
 
     return result;
 }
