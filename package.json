@@ -1,19 +1,19 @@
 {
-  "name": "openvr.js",
-  "version": "0.1.0",
-  "description": "A implementation of OpenVR in Node.js",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "name": "@sier-vr/openvr.js",
+  "version": "0.2.0",
+  "description": "An implementation of OpenVR in Node.js",
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "scripts": {
     "build": "node-gyp rebuild && tsc"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SieR-VR/OpenVR.js.git"
+    "url": "https://github.com/SieR-VR/OpenVR.js.git"
   },
   "keywords": [],
   "author": "SieR-VR",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/SieR-VR/OpenVR.js/issues"
   },
@@ -24,6 +24,9 @@
   },
   "devDependencies": {
     "nan": "^2.14.2"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "type": "module"
 }

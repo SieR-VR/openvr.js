@@ -85,7 +85,7 @@ void IVROverlay::Init(Local<Object> exports)
     Nan::SetPrototypeMethod(tpl, "ClearOverlayTexture", ClearOverlayTexture);
     Nan::SetPrototypeMethod(tpl, "SetOverlayRaw", SetOverlayRaw);
     Nan::SetPrototypeMethod(tpl, "SetOverlayFromFile", SetOverlayFromFile);
-    Nan::SetPrototypeMethod(tpl, "GetOverlayTexture", GetOverlayTexture);
+    // Nan::SetPrototypeMethod(tpl, "GetOverlayTexture", GetOverlayTexture);
     Nan::SetPrototypeMethod(tpl, "ReleaseNativeOverlayHandle", ReleaseNativeOverlayHandle);
     Nan::SetPrototypeMethod(tpl, "GetOverlayTextureSize", GetOverlayTextureSize);
 
@@ -1108,38 +1108,228 @@ void IVROverlay::ClearOverlayCursorPositionOverride(const Nan::FunctionCallbackI
 // ---------------------------------------------
 
 // virtual EVROverlayError SetOverlayTexture( VROverlayHandle_t ulOverlayHandle, const Texture_t *pTexture ) = 0;
-void SetOverlayTexture(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::SetOverlayTexture(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    vr::Texture_t Texture = decode<vr::Texture_t>(info[1], info.GetIsolate());
+
+    vr::EVROverlayError error = obj->self_->SetOverlayTexture(ulOverlayHandle, &Texture);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+}
 // virtual EVROverlayError ClearOverlayTexture( VROverlayHandle_t ulOverlayHandle ) = 0;
-void ClearOverlayTexture(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::ClearOverlayTexture(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    vr::EVROverlayError error = obj->self_->ClearOverlayTexture(ulOverlayHandle);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+}
 // virtual EVROverlayError SetOverlayRaw( VROverlayHandle_t ulOverlayHandle, void *pvBuffer, uint32_t unWidth, uint32_t unHeight, uint32_t unBytesPerPixel ) = 0;
-void SetOverlayRaw(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::SetOverlayRaw(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    void *pvBuffer = (void *)(uintptr_t)(info[1]->Int32Value(context).FromJust());
+    uint32_t unWidth = info[2]->Uint32Value(context).FromJust();
+    uint32_t unHeight = info[3]->Uint32Value(context).FromJust();
+    uint32_t unBytesPerPixel = info[4]->Uint32Value(context).FromJust();
+
+    vr::EVROverlayError error = obj->self_->SetOverlayRaw(ulOverlayHandle, pvBuffer, unWidth, unHeight, unBytesPerPixel);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+}
 // virtual EVROverlayError SetOverlayFromFile( VROverlayHandle_t ulOverlayHandle, const char *pchFilePath ) = 0;
-void SetOverlayFromFile(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::SetOverlayFromFile(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    const char *pchFilePath = *(Nan::Utf8String(info[1]));
+
+    vr::EVROverlayError error = obj->self_->SetOverlayFromFile(ulOverlayHandle, pchFilePath);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+}
 // virtual EVROverlayError GetOverlayTexture( VROverlayHandle_t ulOverlayHandle, void **pNativeTextureHandle, void *pNativeTextureRef, uint32_t *pWidth, uint32_t *pHeight, uint32_t *pNativeFormat, ETextureType *pAPIType, EColorSpace *pColorSpace, VRTextureBounds_t *pTextureBounds ) = 0;
-void GetOverlayTexture(const Nan::FunctionCallbackInfo<Value> &info);
+// void IVROverlay::GetOverlayTexture(const Nan::FunctionCallbackInfo<Value> &info);
 // virtual EVROverlayError ReleaseNativeOverlayHandle( VROverlayHandle_t ulOverlayHandle, void *pNativeTextureHandle ) = 0;
-void ReleaseNativeOverlayHandle(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::ReleaseNativeOverlayHandle(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    void *pNativeTextureHandle = (void *)(uintptr_t)(info[1]->Uint32Value(context).FromJust());
+
+    vr::EVROverlayError error = obj->self_->ReleaseNativeOverlayHandle(ulOverlayHandle, pNativeTextureHandle);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+}
 // virtual EVROverlayError GetOverlayTextureSize( VROverlayHandle_t ulOverlayHandle, uint32_t *pWidth, uint32_t *pHeight ) = 0;
-void GetOverlayTextureSize(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::GetOverlayTextureSize(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    uint32_t Width, Height;
+
+    vr::EVROverlayError error = obj->self_->GetOverlayTextureSize(ulOverlayHandle, &Width, &Height);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+
+    Local<Object> result = Nan::New<Object>();
+    {
+        Local<String> Width_prop = Nan::New<String>("Width").ToLocalChecked();
+        Nan::Set(result, Width_prop, Nan::New<Number>(Width));
+
+        Local<String> Height_prop = Nan::New<String>("Height").ToLocalChecked();
+        Nan::Set(result, Height_prop, Nan::New<Number>(Height));
+    }
+
+    info.GetReturnValue().Set(result);
+}
 
 // ----------------------------------------------
 // Dashboard Overlay Methods
 // ----------------------------------------------
 
 // virtual EVROverlayError CreateDashboardOverlay( const char *pchOverlayKey, const char *pchOverlayFriendlyName, VROverlayHandle_t * pMainHandle, VROverlayHandle_t *pThumbnailHandle ) = 0;
-void CreateDashboardOverlay(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::CreateDashboardOverlay(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    const char *pchOverlayKey = *(Nan::Utf8String(info[0]));
+    const char *pchOverlayFriendlyName = *(Nan::Utf8String(info[1]));
+    vr::VROverlayHandle_t MainHandle, ThumbnailHandle;
+
+    vr::EVROverlayError error = obj->self_->CreateDashboardOverlay(pchOverlayKey, pchOverlayFriendlyName, &MainHandle, &ThumbnailHandle);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+
+    Local<Object> result = Nan::New<Object>();
+    {
+        Local<String> MainHandle_prop = Nan::New<String>("MainHandle").ToLocalChecked();
+        Nan::Set(result, MainHandle_prop, Nan::New<Number>(static_cast<uint64_t>(MainHandle)));
+
+        Local<String> ThumbnailHandle_prop = Nan::New<String>("ThumbnailHandle").ToLocalChecked();
+        Nan::Set(result, ThumbnailHandle_prop, Nan::New<Number>(static_cast<uint64_t>(ThumbnailHandle)));
+    }
+    
+    info.GetReturnValue().Set(result);
+}
 // virtual bool IsDashboardVisible() = 0;
-void IsDashboardVisible(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::IsDashboardVisible(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    bool isDashboardVisible = obj->self_->IsDashboardVisible();
+    info.GetReturnValue().Set(Nan::New<Boolean>(isDashboardVisible));
+}
 // virtual bool IsActiveDashboardOverlay( VROverlayHandle_t ulOverlayHandle ) = 0;
-void IsActiveDashboardOverlay(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::IsActiveDashboardOverlay(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    bool isActiveDashboardOverlay = obj->self_->IsActiveDashboardOverlay(ulOverlayHandle);
+    info.GetReturnValue().Set(Nan::New<Boolean>(isActiveDashboardOverlay));
+}
 // virtual EVROverlayError SetDashboardOverlaySceneProcess( VROverlayHandle_t ulOverlayHandle, uint32_t unProcessId ) = 0;
-void SetDashboardOverlaySceneProcess(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::SetDashboardOverlaySceneProcess(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    uint32_t unProcessId = info[1]->Uint32Value(context).FromJust();
+
+    vr::EVROverlayError error = obj->self_->SetDashboardOverlaySceneProcess(ulOverlayHandle, unProcessId);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+}
 // virtual EVROverlayError GetDashboardOverlaySceneProcess( VROverlayHandle_t ulOverlayHandle, uint32_t *punProcessId ) = 0;
-void GetDashboardOverlaySceneProcess(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::GetDashboardOverlaySceneProcess(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    uint32_t unProcessId;
+
+    vr::EVROverlayError error = obj->self_->GetDashboardOverlaySceneProcess(ulOverlayHandle, &unProcessId);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+
+    info.GetReturnValue().Set(Nan::New<Number>(unProcessId));
+}
 // virtual void ShowDashboard( const char *pchOverlayToShow ) = 0;
-void ShowDashboard(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::ShowDashboard(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    const char *pchOverlayToShow = *(Nan::Utf8String(info[0]));
+    obj->self_->ShowDashboard(pchOverlayToShow);
+}
 // virtual vr::TrackedDeviceIndex_t GetPrimaryDashboardDevice() = 0;
-void GetPrimaryDashboardDevice(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::GetPrimaryDashboardDevice(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::TrackedDeviceIndex_t PrimaryDashboardDevice = obj->self_->GetPrimaryDashboardDevice();
+    info.GetReturnValue().Set(Nan::New<Number>(static_cast<uint32_t>(PrimaryDashboardDevice)));
+}
 
 // ---------------------------------------------
 // Keyboard methods
@@ -1147,25 +1337,149 @@ void GetPrimaryDashboardDevice(const Nan::FunctionCallbackInfo<Value> &info);
 
 // virtual EVROverlayError ShowKeyboard( EGamepadTextInputMode eInputMode, EGamepadTextInputLineMode eLineInputMode, uint32_t unFlags,
 //		const char *pchDescription, uint32_t unCharMax, const char *pchExistingText, uint64_t uUserValue ) = 0;
-void ShowKeyboard(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::ShowKeyboard(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::EGamepadTextInputMode eInputMode = static_cast<vr::EGamepadTextInputMode>(info[0]->Uint32Value(context).FromJust());
+    vr::EGamepadTextInputLineMode eLineInputMode = static_cast<vr::EGamepadTextInputLineMode>(info[1]->Uint32Value(context).FromJust());
+    uint32_t unFlags = info[2]->Uint32Value(context).FromJust();
+    const char *pchDescription = *(Nan::Utf8String(info[3]));
+    const char *pchExistingText = *(Nan::Utf8String(info[4]));
+    uint64_t uUserValue = info[5]->Uint32Value(context).FromJust();
+
+    vr::EVROverlayError error = obj->self_->ShowKeyboard(eInputMode, eLineInputMode, unFlags, pchDescription, vr::k_unVROverlayMaxNameLength, pchExistingText, uUserValue);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+}
 // virtual EVROverlayError ShowKeyboardForOverlay( VROverlayHandle_t ulOverlayHandle, EGamepadTextInputMode eInputMode,
 //		EGamepadTextInputLineMode eLineInputMode, uint32_t unFlags, const char *pchDescription, uint32_t unCharMax,
 //		const char *pchExistingText, uint64_t uUserValue ) = 0;
-void ShowKeyboardForOverlay(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::ShowKeyboardForOverlay(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    vr::EGamepadTextInputMode eInputMode = static_cast<vr::EGamepadTextInputMode>(info[1]->Uint32Value(context).FromJust());
+    vr::EGamepadTextInputLineMode eLineInputMode = static_cast<vr::EGamepadTextInputLineMode>(info[2]->Uint32Value(context).FromJust());
+    uint32_t unFlags = info[3]->Uint32Value(context).FromJust();
+    const char *pchDescription = *(Nan::Utf8String(info[4]));
+    const char *pchExistingText = *(Nan::Utf8String(info[5]));
+    uint64_t uUserValue = info[6]->Uint32Value(context).FromJust();
+
+    vr::EVROverlayError error = obj->self_->ShowKeyboardForOverlay(ulOverlayHandle, eInputMode, eLineInputMode, unFlags, pchDescription, vr::k_unVROverlayMaxNameLength, pchExistingText, uUserValue);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+}
 // virtual uint32_t GetKeyboardText( VR_OUT_STRING() char *pchText, uint32_t cchText ) = 0;
-void GetKeyboardText(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::GetKeyboardText(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    char *pchText;
+    uint32_t cchText = info[0]->Uint32Value(context).FromJust();
+    uint32_t textLength = obj->self_->GetKeyboardText(pchText, cchText);
+
+    info.GetReturnValue().Set(Nan::New<String>(pchText).ToLocalChecked());
+}
 // virtual void HideKeyboard() = 0;
-void HideKeyboard(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::HideKeyboard(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    obj->self_->HideKeyboard();
+}
 // virtual void SetKeyboardTransformAbsolute( ETrackingUniverseOrigin eTrackingOrigin, const HmdMatrix34_t *pmatTrackingOriginToKeyboardTransform ) = 0;
-void SetKeyboardTransformAbsolute(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::SetKeyboardTransformAbsolute(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::ETrackingUniverseOrigin eTrackingOrigin = static_cast<vr::ETrackingUniverseOrigin>(info[0]->Uint32Value(context).FromJust());
+}
 // virtual void SetKeyboardPositionForOverlay( VROverlayHandle_t ulOverlayHandle, HmdRect2_t avoidRect ) = 0;
-void SetKeyboardPositionForOverlay(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::SetKeyboardPositionForOverlay(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    vr::HmdRect2_t avoidRect = decode<vr::HmdRect2_t>(info[1], info.GetIsolate());
+}
 
 // ---------------------------------------------
 // Message box methods
 // ---------------------------------------------
 
 // virtual VRMessageOverlayResponse ShowMessageOverlay( const char* pchText, const char* pchCaption, const char* pchButton0Text, const char* pchButton1Text = nullptr, const char* pchButton2Text = nullptr, const char* pchButton3Text = nullptr ) = 0;
-void ShowMessageOverlay(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::ShowMessageOverlay(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    const char *pchText = *(Nan::Utf8String(info[0]));
+    const char *pchCaption = *(Nan::Utf8String(info[1]));
+
+    const char *pchButton0Text;
+    const char *pchButton1Text;
+    const char *pchButton2Text;
+    const char *pchButton3Text;
+
+    vr::VRMessageOverlayResponse MessageOverlayResponse;
+
+    switch(info.Length())
+    {
+        case 3:
+        {
+            pchButton0Text = *(Nan::Utf8String(info[2]));
+            MessageOverlayResponse = obj->self_->ShowMessageOverlay(pchText, pchCaption, pchButton0Text);
+            break;
+        }
+        case 4:
+        {
+            pchButton0Text = *(Nan::Utf8String(info[2]));
+            pchButton1Text = *(Nan::Utf8String(info[3]));
+            MessageOverlayResponse = obj->self_->ShowMessageOverlay(pchText, pchCaption, pchButton0Text, pchButton1Text);
+            break;
+        }
+        case 5:
+        {
+            pchButton0Text = *(Nan::Utf8String(info[2]));
+            pchButton1Text = *(Nan::Utf8String(info[3]));
+            pchButton2Text = *(Nan::Utf8String(info[4]));
+            MessageOverlayResponse = obj->self_->ShowMessageOverlay(pchText, pchCaption, pchButton0Text, pchButton1Text, pchButton2Text);
+            break;
+        }
+        case 6:
+        {
+            pchButton0Text = *(Nan::Utf8String(info[2]));
+            pchButton1Text = *(Nan::Utf8String(info[3]));
+            pchButton2Text = *(Nan::Utf8String(info[4]));
+            pchButton3Text = *(Nan::Utf8String(info[5]));
+            MessageOverlayResponse = obj->self_->ShowMessageOverlay(pchText, pchCaption, pchButton0Text, pchButton1Text, pchButton2Text, pchButton3Text);
+            break;
+        }
+    }
+
+    info.GetReturnValue().Set(Nan::New<Number>(static_cast<uint32_t>(MessageOverlayResponse)));
+}
 // virtual void CloseMessageOverlay() = 0;
-void CloseMessageOverlay(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::CloseMessageOverlay(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    obj->self_->CloseMessageOverlay();
+}

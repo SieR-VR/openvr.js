@@ -168,7 +168,7 @@ private:
     // virtual EVROverlayError SetOverlayFromFile( VROverlayHandle_t ulOverlayHandle, const char *pchFilePath ) = 0;
     static void SetOverlayFromFile(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual EVROverlayError GetOverlayTexture( VROverlayHandle_t ulOverlayHandle, void **pNativeTextureHandle, void *pNativeTextureRef, uint32_t *pWidth, uint32_t *pHeight, uint32_t *pNativeFormat, ETextureType *pAPIType, EColorSpace *pColorSpace, VRTextureBounds_t *pTextureBounds ) = 0;
-    static void GetOverlayTexture(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void GetOverlayTexture(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual EVROverlayError ReleaseNativeOverlayHandle( VROverlayHandle_t ulOverlayHandle, void *pNativeTextureHandle ) = 0;
     static void ReleaseNativeOverlayHandle(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual EVROverlayError GetOverlayTextureSize( VROverlayHandle_t ulOverlayHandle, uint32_t *pWidth, uint32_t *pHeight ) = 0;

@@ -358,7 +358,7 @@ void IVRSystem::GetSortedTrackedDeviceIndicesOfClass(const Nan::FunctionCallback
         static_cast<uint32_t>(trackedDeviceIndexArray.size()),
         unRelativeToTrackedDeviceIndex);
 
-    info.GetReturnValue().Set(encode(trackedDeviceIndexArray, nDeviceIndices));
+    info.GetReturnValue().Set(encode(trackedDeviceIndexArray));
 }
 
 void IVRSystem::GetTrackedDeviceActivityLevel(const Nan::FunctionCallbackInfo<Value> &info)

@@ -14,8 +14,10 @@
             ],
             'sources': [
                 'src/bindings.cpp',
+                'src/util.cpp',
                 'src/ivrsystem.cpp',
                 'src/openvr.cpp',
+                'src/ivroverlay.cpp',
             ],
             'include_dirs': [
                 "<!(node -e \"require('nan')\")",
