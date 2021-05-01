@@ -145,7 +145,7 @@ private:
     // virtual bool IsHoverTargetOverlay( VROverlayHandle_t ulOverlayHandle ) = 0;
     static void IsHoverTargetOverlay(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual EVROverlayError SetOverlayIntersectionMask( VROverlayHandle_t ulOverlayHandle, VROverlayIntersectionMaskPrimitive_t *pMaskPrimitives, uint32_t unNumMaskPrimitives, uint32_t unPrimitiveSize = sizeof( VROverlayIntersectionMaskPrimitive_t ) ) = 0;
-    static void SetOverlayIntersectionMask(const Nan::FunctionCallbackInfo<Value> &info);
+    // static void SetOverlayIntersectionMask(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual EVROverlayError TriggerLaserMouseHapticVibration( VROverlayHandle_t ulOverlayHandle, float fDurationSeconds, float fFrequency, float fAmplitude ) = 0;
     static void TriggerLaserMouseHapticVibration(const Nan::FunctionCallbackInfo<Value> &info);
     // virtual EVROverlayError SetOverlayCursor( VROverlayHandle_t ulOverlayHandle, VROverlayHandle_t ulCursorHandle ) = 0;

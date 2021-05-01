@@ -75,7 +75,7 @@ void IVROverlay::Init(Local<Object> exports)
     Nan::SetPrototypeMethod(tpl, "SetOverlayMouseScale", SetOverlayMouseScale);
     Nan::SetPrototypeMethod(tpl, "ComputeOverlayIntersection", ComputeOverlayIntersection);
     Nan::SetPrototypeMethod(tpl, "IsHoverTargetOverlay", IsHoverTargetOverlay);
-    Nan::SetPrototypeMethod(tpl, "SetOverlayIntersectionMask", SetOverlayIntersectionMask);
+    // Nan::SetPrototypeMethod(tpl, "SetOverlayIntersectionMask", SetOverlayIntersectionMask);
     Nan::SetPrototypeMethod(tpl, "TriggerLaserMouseHapticVibration", TriggerLaserMouseHapticVibration);
     Nan::SetPrototypeMethod(tpl, "SetOverlayCursor", SetOverlayCursor);
     Nan::SetPrototypeMethod(tpl, "SetOverlayCursorPositionOverride", SetOverlayCursorPositionOverride);
@@ -923,29 +923,185 @@ void IVROverlay::GetTransformForOverlayCoordinates(const Nan::FunctionCallbackIn
 // ---------------------------------------------
 
 // virtual bool PollNextOverlayEvent( VROverlayHandle_t ulOverlayHandle, VREvent_t *pEvent, uint32_t uncbVREvent ) = 0;
-void PollNextOverlayEvent(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::PollNextOverlayEvent(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    vr::VREvent_t event;
+    bool success = obj->self_->PollNextOverlayEvent(ulOverlayHandle, &event, sizeof(vr::VREvent_t));
+
+    info.GetReturnValue().Set(encode(event));
+}
 // virtual EVROverlayError GetOverlayInputMethod( VROverlayHandle_t ulOverlayHandle, VROverlayInputMethod *peInputMethod ) = 0;
-void GetOverlayInputMethod(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::GetOverlayInputMethod(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    vr::VROverlayInputMethod eInputMethod;
+
+    vr::EVROverlayError error = obj->self_->GetOverlayInputMethod(ulOverlayHandle, &eInputMethod);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+
+    info.GetReturnValue().Set(Nan::New<Number>(static_cast<uint32_t>(eInputMethod)));
+}
 // virtual EVROverlayError SetOverlayInputMethod( VROverlayHandle_t ulOverlayHandle, VROverlayInputMethod eInputMethod ) = 0;
-void SetOverlayInputMethod(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::SetOverlayInputMethod(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    vr::VROverlayInputMethod eInputMethod = static_cast<vr::VROverlayInputMethod>(info[1]->Uint32Value(context).FromJust());
+
+    vr::EVROverlayError error = obj->self_->SetOverlayInputMethod(ulOverlayHandle, eInputMethod);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+}
 // virtual EVROverlayError GetOverlayMouseScale( VROverlayHandle_t ulOverlayHandle, HmdVector2_t *pvecMouseScale ) = 0;
-void GetOverlayMouseScale(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::GetOverlayMouseScale(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    vr::HmdVector2_t vecMouseScale;
+
+    vr::EVROverlayError error = obj->self_->GetOverlayMouseScale(ulOverlayHandle, &vecMouseScale);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+
+    info.GetReturnValue().Set(encode(vecMouseScale));
+}
 // virtual EVROverlayError SetOverlayMouseScale( VROverlayHandle_t ulOverlayHandle, const HmdVector2_t *pvecMouseScale ) = 0;
-void SetOverlayMouseScale(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::SetOverlayMouseScale(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    vr::HmdVector2_t vecMouseScale = decode<vr::HmdVector2_t>(info[1], info.GetIsolate());
+
+    vr::EVROverlayError error = obj->self_->GetOverlayMouseScale(ulOverlayHandle, &vecMouseScale);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+}
 // virtual bool ComputeOverlayIntersection( VROverlayHandle_t ulOverlayHandle, const VROverlayIntersectionParams_t *pParams, VROverlayIntersectionResults_t *pResults ) = 0;
-void ComputeOverlayIntersection(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::ComputeOverlayIntersection(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    vr::VROverlayIntersectionParams_t Params = decode<vr::VROverlayIntersectionParams_t>(info[1], info.GetIsolate());
+    vr::VROverlayIntersectionResults_t Results = decode<vr::VROverlayIntersectionResults_t>(info[2], info.GetIsolate());
+
+    bool success = obj->self_->ComputeOverlayIntersection(ulOverlayHandle, &Params, &Results);
+
+    info.GetReturnValue().Set(Nan::New<Boolean>(success));
+}
 // virtual bool IsHoverTargetOverlay( VROverlayHandle_t ulOverlayHandle ) = 0;
-void IsHoverTargetOverlay(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::IsHoverTargetOverlay(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    bool isHoverTargetOverlay = obj->self_->IsHoverTargetOverlay(ulOverlayHandle);
+
+    info.GetReturnValue().Set(Nan::New<Boolean>(isHoverTargetOverlay));
+}
 // virtual EVROverlayError SetOverlayIntersectionMask( VROverlayHandle_t ulOverlayHandle, VROverlayIntersectionMaskPrimitive_t *pMaskPrimitives, uint32_t unNumMaskPrimitives, uint32_t unPrimitiveSize = sizeof( VROverlayIntersectionMaskPrimitive_t ) ) = 0;
-void SetOverlayIntersectionMask(const Nan::FunctionCallbackInfo<Value> &info);
+// void IVROverlay::SetOverlayIntersectionMask(const Nan::FunctionCallbackInfo<Value> &info)
 // virtual EVROverlayError TriggerLaserMouseHapticVibration( VROverlayHandle_t ulOverlayHandle, float fDurationSeconds, float fFrequency, float fAmplitude ) = 0;
-void TriggerLaserMouseHapticVibration(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::TriggerLaserMouseHapticVibration(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    float fDurationSeconds = info[1]->NumberValue(context).FromJust();
+    float fFrequency = info[2]->NumberValue(context).FromJust();
+    float fAmplitude = info[3]->NumberValue(context).FromJust();
+
+    vr::EVROverlayError error = obj->self_->TriggerLaserMouseHapticVibration(ulOverlayHandle, fDurationSeconds, fFrequency, fAmplitude);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+}
 // virtual EVROverlayError SetOverlayCursor( VROverlayHandle_t ulOverlayHandle, VROverlayHandle_t ulCursorHandle ) = 0;
-void SetOverlayCursor(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::SetOverlayCursor(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    vr::VROverlayHandle_t ulCursorHandle = static_cast<vr::VROverlayHandle_t>(info[1]->Uint32Value(context).FromJust());
+
+    vr::EVROverlayError error = obj->self_->SetOverlayCursor(ulOverlayHandle, ulCursorHandle);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+}
 // virtual EVROverlayError SetOverlayCursorPositionOverride( VROverlayHandle_t ulOverlayHandle, const HmdVector2_t *pvCursor ) = 0;
-void SetOverlayCursorPositionOverride(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::SetOverlayCursorPositionOverride(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+    vr::HmdVector2_t vCursor = decode<vr::HmdVector2_t>(info[1], info.GetIsolate());
+
+    vr::EVROverlayError error = obj->self_->SetOverlayCursorPositionOverride(ulOverlayHandle, &vCursor);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+}
 // virtual EVROverlayError ClearOverlayCursorPositionOverride( VROverlayHandle_t ulOverlayHandle ) = 0;
-void ClearOverlayCursorPositionOverride(const Nan::FunctionCallbackInfo<Value> &info);
+void IVROverlay::ClearOverlayCursorPositionOverride(const Nan::FunctionCallbackInfo<Value> &info)
+{
+    Local<Context> context = info.GetIsolate()->GetCurrentContext();
+    IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
+
+    vr::VROverlayHandle_t ulOverlayHandle = static_cast<vr::VROverlayHandle_t>(info[0]->Uint32Value(context).FromJust());
+
+    vr::EVROverlayError error = obj->self_->ClearOverlayCursorPositionOverride(ulOverlayHandle);
+
+    if (error != vr::VROverlayError_None)
+    {
+        Nan::ThrowError(obj->self_->GetOverlayErrorNameFromEnum(error));
+        return;
+    }
+}
 
 // ---------------------------------------------
 // Overlay texture methods

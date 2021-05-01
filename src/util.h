@@ -344,6 +344,125 @@ vr::VROverlayProjection_t decode(const v8::Local<v8::Value> value, v8::Isolate *
 
 //=========================================================
 template <typename T>
+v8::Local<v8::Value> encode(const vr::VREvent_t& value)
+{
+    Nan::EscapableHandleScope scope;
+    auto result = Nan::New<v8::Object>();
+
+    auto eventType_prop = Nan::New<v8::String>("eventType").ToLocalChecked();
+    Nan::Set(result, eventType_prop, Nan::New<v8::Number>(value.eventType));
+
+    auto trackedDeviceIndex_prop = Nan::New<v8::String>("trackedDeviceIndex").ToLocalChecked();
+    Nan::Set(result, trackedDeviceIndex_prop, Nan::New<v8::Number>(value.trackedDeviceIndex));
+
+    auto eventAgeSeconds_prop = Nan::New<v8::String>("eventAgeSeconds").ToLocalChecked();
+    Nan::Set(result, eventAgeSeconds_prop, Nan::New<v8::Number>(value.eventAgeSeconds));
+
+    auto data_prop = Nan::New<v8::String>("data").ToLocalChecked();
+    Nan::Set(result, data_prop, encode(value.data, value.eventType));
+
+    return scope.Escape(result);
+}
+
+//=========================================================
+template <typename T>
+v8::Local<v8::Value> encode(const vr::VREvent_Data_t eventData, const vr::EVREventType eventType)
+{
+    Nan::EscapableHandleScope scope;
+    auto result = Nan::New<v8::Object>();
+
+    switch(eventType) 
+    {
+        case vr::VREvent_None:
+        case vr::VREvent_TrackedDeviceActivated:
+        case vr::VREvent_TrackedDeviceDeactivated:
+        case vr::VREvent_TrackedDeviceUpdated:
+            return scope.Escape(Nan::New<v8::Object>());
+        case vr::VREvent_ButtonPress:
+        case vr::VREvent_ButtonUnpress:
+        case vr::VREvent_ButtonTouch:
+        case vr::VREvent_ButtonUntouch:
+        {
+            auto result = Nan::New<v8::Object>();
+
+            auto controller_result = Nan::New<v8::Object>();
+            auto controller_prop = Nan::New<v8::String>("controller").ToLocalChecked();
+            
+            auto button_prop = Nan::New<v8::String>("button").ToLocalChecked();
+            Nan::Set(controller_result, button_prop, Nan::New<v8::Number>(eventData.controller.button));
+
+            Nan::Set(result, controller_prop, controller_result);
+
+            return scope.Escape(result);
+        }
+        case vr::VREvent_MouseMove:
+        case vr::VREvent_MouseButtonDown:
+        case vr::VREvent_MouseButtonUp:
+        {
+            auto result = Nan::New<v8::Object>();
+
+            auto mouse_result = Nan::New<v8::Object>();
+            auto mouse_prop = Nan::New<v8::String>("mouse").ToLocalChecked();
+            
+            auto button_prop = Nan::New<v8::String>("button").ToLocalChecked();
+            Nan::Set(mouse_result, button_prop, Nan::New<v8::Number>(eventData.mouse.button));
+            auto x_prop = Nan::New<v8::String>("x").ToLocalChecked();
+            Nan::Set(mouse_result, x_prop, Nan::New<v8::Number>(eventData.mouse.x));
+            auto y_prop = Nan::New<v8::String>("y").ToLocalChecked();
+            Nan::Set(mouse_result, y_prop, Nan::New<v8::Number>(eventData.mouse.y));
+
+            Nan::Set(result, mouse_prop, mouse_result);
+
+            return scope.Escape(result);
+        }
+        default:
+            return scope.Escape(Nan::New<v8::Object>());
+    }
+}
+
+//=========================================================
+template<>
+vr::VROverlayIntersectionParams_t decode(const v8::Local<v8::Value> value, v8::Isolate *isolate)
+{
+    vr::VROverlayIntersectionParams_t result;
+    const auto object = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+
+    auto eOrigin_prop = Nan::New<v8::String>("eOrigin").ToLocalChecked();
+    result.eOrigin = static_cast<vr::ETrackingUniverseOrigin>(Nan::Get(object, eOrigin_prop).ToLocalChecked()->Uint32Value(isolate->GetCurrentContext()).FromJust());
+
+    auto vDirection_prop = Nan::New<v8::String>("vDirection").ToLocalChecked();
+    result.vDirection = decode<vr::HmdVector3_t>(Nan::Get(object, vDirection_prop).ToLocalChecked(), isolate);
+
+    auto vSource_prop = Nan::New<v8::String>("vSource").ToLocalChecked();
+    result.vSource = decode<vr::HmdVector3_t>(Nan::Get(object, vSource_prop).ToLocalChecked(), isolate);
+
+    return result;
+}
+
+//=========================================================
+template<>
+vr::VROverlayIntersectionResults_t decode(const v8::Local<v8::Value> value, v8::Isolate *isolate)
+{
+    vr::VROverlayIntersectionResults_t result;
+    const auto object = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+
+    auto fDistance_prop = Nan::New<v8::String>("fDistance").ToLocalChecked();
+    result.fDistance = Nan::Get(object, fDistance_prop).ToLocalChecked()->NumberValue(isolate->GetCurrentContext()).FromJust();
+
+    auto vNormal_prop = Nan::New<v8::String>("vNormal").ToLocalChecked();
+    result.vNormal = decode<vr::HmdVector3_t>(Nan::Get(object, vNormal_prop).ToLocalChecked(), isolate);
+
+    auto vPoint_prop = Nan::New<v8::String>("vPoint").ToLocalChecked();
+    result.vPoint = decode<vr::HmdVector3_t>(Nan::Get(object, vPoint_prop).ToLocalChecked(), isolate);
+
+    auto vUVs_prop = Nan::New<v8::String>("vUVs").ToLocalChecked();
+    result.vUVs = decode<vr::HmdVector2_t>(Nan::Get(object, vUVs_prop).ToLocalChecked(), isolate);
+
+    return result;
+}
+
+//=========================================================
+template <typename T>
 v8::Local<v8::Value> encode(const T &value)
 {
     return encode(value, value.size());
