@@ -109,6 +109,14 @@ template<>
 vr::HmdRect2_t decode(const v8::Local<v8::Value> value, v8::Isolate *isolate);
 
 //=========================================================
+template<>
+vr::VROverlayHandle_t decode(const v8::Local<v8::Value> value, v8::Isolate *isolate);
+
+//=========================================================
+template<>
+v8::Local<v8::Value> encode(const vr::VROverlayHandle_t &value);
+
+//=========================================================
 template <typename T>
 v8::Local<v8::Value> encode(const T &value);
 

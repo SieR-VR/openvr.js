@@ -502,6 +502,38 @@ vr::HmdRect2_t decode(const v8::Local<v8::Value> value, v8::Isolate *isolate)
 }
 
 //=========================================================
+template<>
+vr::VROverlayHandle_t decode(const v8::Local<v8::Value> value, v8::Isolate *isolate)
+{
+    vr::VROverlayHandle_t result;
+    const auto object = value->ToObject(isolate->GetCurrentContext()).ToLocalChecked();
+
+    auto DownBits_prop = Nan::New("DownBits").ToLocalChecked();
+    uint32_t DownBits = Nan::Get(object, DownBits_prop).ToLocalChecked()->Uint32Value(isolate->GetCurrentContext()).FromJust();
+
+    auto UpBits_prop = Nan::New("UpBits").ToLocalChecked();
+    uint32_t UpBits = Nan::Get(object, UpBits_prop).ToLocalChecked()->Uint32Value(isolate->GetCurrentContext()).FromJust();
+
+    return static_cast<vr::VROverlayHandle_t>((uint64_t) UpBits << 32 | DownBits);
+}
+//=========================================================
+template<>
+v8::Local<v8::Value> encode(const vr::VROverlayHandle_t &value)
+{
+    Nan::EscapableHandleScope scope;
+    auto result = Nan::New<v8::Object>();
+    uint64_t mask = (uint64_t) 1 << 32; 
+
+    auto DownBits_prop = Nan::New<v8::String>("DownBits").ToLocalChecked();
+    Nan::Set(result, DownBits_prop, Nan::New<v8::Number>(value % mask));
+
+    auto UpBits_prop = Nan::New<v8::String>("UpBits").ToLocalChecked();
+    Nan::Set(result, UpBits_prop, Nan::New<v8::Number>(value >> 32));
+
+    return scope.Escape(result);
+}
+
+//=========================================================
 template <typename T>
 v8::Local<v8::Value> encode(const T &value)
 {

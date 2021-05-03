@@ -1,4 +1,5 @@
 #include "ivrsystem.h"
+#include "ivroverlay.h"
 #include "openvr.h"
 
 #include <nan.h>
@@ -31,8 +32,12 @@ void Initialize(v8::Local<v8::Object> exports)
     exports->Set(context,
                  Nan::New("VR_GetInitToken").ToLocalChecked(),
                  Nan::New<v8::FunctionTemplate>(VR_GetInitToken)->GetFunction(context).ToLocalChecked());
-
+     exports->Set(context,
+                 Nan::New("IVROverlay_Init").ToLocalChecked(),
+                 Nan::New<v8::FunctionTemplate>(IVROverlay_Init)->GetFunction(context).ToLocalChecked());
+                 
     IVRSystem::Init(exports);
+    IVROverlay::Init(exports);
 }
 
 NODE_MODULE(openvr, Initialize);

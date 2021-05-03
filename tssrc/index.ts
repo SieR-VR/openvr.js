@@ -1,5 +1,4 @@
-import bindings from 'bindings';
-const openvr = bindings('openvr')
+const openvr = require('bindings')('openvr')
 
 export namespace vr {
     // version.h
@@ -953,8 +952,11 @@ export namespace vr {
 
         COLLISION_BOUNDS_STYLE_COUNT
     };
-    export type VROverlayHandle_t = number;
-    export const k_ulOverlayHandleInvalid: VROverlayHandle_t = 0;
+    export type VROverlayHandle_t = {
+        DownBits: number,
+        UpBits: number
+    };
+    export const k_ulOverlayHandleInvalid: VROverlayHandle_t = { DownBits: 0, UpBits: 0 };
     export enum EVROverlayError {
         VROverlayError_None = 0,
 
@@ -1403,6 +1405,8 @@ export namespace vr {
     // export const VR_IsInterfaceVersionValid = function( sInterfaceVersion: string ): boolean { return openvr.VR_IsInterfaceVersionValid(); }
     export const VR_GetInitToken = function (): number { return openvr.VR_GetInitToken(); }
 
+    export const IVROverlay_Init = function (): IVROverlay { return openvr.IVROverlay_Init(); }
+
 
     export class IVRSystem {
 
@@ -1418,24 +1422,24 @@ export namespace vr {
         GetTimeSinceLastVsync(): { seconds: number, frame: number } { return openvr.IVRSystem.GetTimeSinceLastVsync(); }
         GetD3D9AdapterIndex(): number { return openvr.IVRSystem.GetD3D9AdapterIndex(); }
         GetDXGIOutputInfo(): number { return openvr.IVRSystem.GetDXGIOutputInfo(); }
-        GetOutputDevice(textureType: ETextureType): number { return openvr.IVRSystem.GetOutputDevice(); } 
+        GetOutputDevice(textureType: ETextureType): number { return openvr.IVRSystem.GetOutputDevice(textureType); }
 
         // ------------------------------------
         // Display Mode methods
         // ------------------------------------
 
         IsDisplayOnDesktop(): boolean { return openvr.IVRSystem.IsDisplayOnDesktop(); }
-        SetDisplayVisibility(bIsVisibleOnDesktop: boolean): boolean { return openvr.IVRSystem.SetDisplayVisibility(); }
+        SetDisplayVisibility(bIsVisibleOnDesktop: boolean): boolean { return openvr.IVRSystem.SetDisplayVisibility(bIsVisibleOnDesktop); }
 
         // ------------------------------------
         // Tracking Methods
         // ------------------------------------
 
-        GetDeviceToAbsoluteTrackingPose(eOrigin: ETrackingUniverseOrigin, fPredictedSecondsToPhotonsFromNow: number): TrackedDevicePose_t[] { return openvr.IVRSystem.GetDeviceToAbsoluteTrackingPose(eOrigin, fPredictedSecondsToPhotonsFromNow ); }
+        GetDeviceToAbsoluteTrackingPose(eOrigin: ETrackingUniverseOrigin, fPredictedSecondsToPhotonsFromNow: number): TrackedDevicePose_t[] { return openvr.IVRSystem.GetDeviceToAbsoluteTrackingPose(eOrigin, fPredictedSecondsToPhotonsFromNow); }
         GetSeatedZeroPoseToStandingAbsoluteTrackingPose(): HmdMatrix34_t { return openvr.IVRSystem.GetSeatedZeroPoseToStandingAbsoluteTrackingPose(); }
         GetRawZeroPoseToStandingAbsoluteTrackingPose(): HmdMatrix34_t { return openvr.IVRSystem.GetRawZeroPoseToStandingAbsoluteTrackingPose(); }
-        GetSortedTrackedDeviceIndicesOfClass(eTrackedDeviceClass: ETrackedDeviceClass, unRelativeToTrackedDeviceIndex?: ETrackedDeviceClass): TrackedDeviceIndex_t[] { 
-            if(unRelativeToTrackedDeviceIndex === undefined) return openvr.IVRSystem.GetSortedTrackedDeviceIndicesOfClass(eTrackedDeviceClass, 0);
+        GetSortedTrackedDeviceIndicesOfClass(eTrackedDeviceClass: ETrackedDeviceClass, unRelativeToTrackedDeviceIndex?: ETrackedDeviceClass): TrackedDeviceIndex_t[] {
+            if (unRelativeToTrackedDeviceIndex === undefined) return openvr.IVRSystem.GetSortedTrackedDeviceIndicesOfClass(eTrackedDeviceClass, 0);
             else return openvr.IVRSystem.GetSortedTrackedDeviceIndicesOfClass(eTrackedDeviceClass, unRelativeToTrackedDeviceIndex);
         }
         GetTrackedDeviceActivityLevel(unDeviceId: TrackedDeviceIndex_t): EDeviceActivityLevel { return openvr.IVRSystem.GetTrackedDeviceActivityLevel(unDeviceId); }
@@ -1469,5 +1473,278 @@ export namespace vr {
 
         PerformFirmwareUpdate(uiTrackedDeviceIndex: TrackedDeviceIndex_t): EVRFirmwareError { return openvr.IVRSystem.PerformFirmwareUpdate(uiTrackedDeviceIndex); }
         AcknowledgeQuit_Exiting(): void { openvr.IVRSystem.AcknowledgeQuit_Exiting(); }
+    }
+
+    export const k_unVROverlayMaxKeyLength: number = 128;
+    export const k_unVROverlayMaxNameLength: number = 128;
+    export const k_unMaxOverlayCount: number = 128;
+    export const k_unMaxOverlayIntersectionMaskPrimitivesCount: number = 32;
+
+    export enum VROverlayInputMethod {
+        VROverlayInputMethod_None = 0, // No input events will be generated automatically for this overlay
+        VROverlayInputMethod_Mouse = 1, // Tracked controllers will get mouse events automatically
+        // VROverlayInputMethod_DualAnalog = 2, // No longer supported
+    };
+
+    export enum VROverlayTransformType {
+        VROverlayTransform_Invalid = -1,
+        VROverlayTransform_Absolute = 0,
+        VROverlayTransform_TrackedDeviceRelative = 1,
+        VROverlayTransform_SystemOverlay = 2,
+        VROverlayTransform_TrackedComponent = 3,
+        VROverlayTransform_Cursor = 4,
+        VROverlayTransform_DashboardTab = 5,
+        VROverlayTransform_DashboardThumb = 6,
+        VROverlayTransform_Mountable = 7,
+        VROverlayTransform_Projection = 8,
+    };
+
+    export enum VROverlayFlags {
+        // Set this flag on a dashboard overlay to prevent a tab from showing up for that overlay
+        VROverlayFlags_NoDashboardTab = 1 << 3,
+
+        // When this is set the overlay will receive VREvent_ScrollDiscrete events like a mouse wheel.
+        // Requires mouse input mode.
+        VROverlayFlags_SendVRDiscreteScrollEvents = 1 << 6,
+
+        // Indicates that the overlay would like to receive
+        VROverlayFlags_SendVRTouchpadEvents = 1 << 7,
+
+        // If set this will render a vertical scroll wheel on the primary controller,
+        //  only needed if not using VROverlayFlags_SendVRScrollEvents but you still want to represent a scroll wheel
+        VROverlayFlags_ShowTouchPadScrollWheel = 1 << 8,
+
+        // If this is set ownership and render access to the overlay are transferred
+        // to the new scene process on a call to IVRApplications::LaunchInternalProcess
+        VROverlayFlags_TransferOwnershipToInternalProcess = 1 << 9,
+
+        // If set, renders 50% of the texture in each eye, side by side
+        VROverlayFlags_SideBySide_Parallel = 1 << 10, // Texture is left/right
+        VROverlayFlags_SideBySide_Crossed = 1 << 11, // Texture is crossed and right/left
+
+        VROverlayFlags_Panorama = 1 << 12, // Texture is a panorama
+        VROverlayFlags_StereoPanorama = 1 << 13, // Texture is a stereo panorama
+
+        // If this is set on an overlay owned by the scene application that overlay
+        // will be sorted with the "Other" overlays on top of all other scene overlays
+        VROverlayFlags_SortWithNonSceneOverlays = 1 << 14,
+
+        // If set, the overlay will be shown in the dashboard, otherwise it will be hidden.
+        VROverlayFlags_VisibleInDashboard = 1 << 15,
+
+        // If this is set and the overlay's input method is not none, the system-wide laser mouse
+        // mode will be activated whenever this overlay is visible.
+        VROverlayFlags_MakeOverlaysInteractiveIfVisible = 1 << 16,
+
+        // If this is set the overlay will receive smooth VREvent_ScrollSmooth that emulate trackpad scrolling.
+        // Requires mouse input mode.
+        VROverlayFlags_SendVRSmoothScrollEvents = 1 << 17,
+
+        // If this is set, the overlay texture will be protected content, preventing unauthorized reads.
+        VROverlayFlags_ProtectedContent = 1 << 18,
+
+        // If this is set, the laser mouse splat will not be drawn over this overlay. The overlay will
+        // be responsible for drawing its own "cursor".
+        VROverlayFlags_HideLaserIntersection = 1 << 19,
+
+        // If this is set, clicking away from the overlay will cause it to receive a VREvent_Modal_Cancel event.
+        // This is ignored for dashboard overlays.
+        VROverlayFlags_WantsModalBehavior = 1 << 20,
+
+        // If this is set, alpha composition assumes the texture is pre-multiplied
+        VROverlayFlags_IsPremultiplied = 1 << 21,
+    };
+
+    export enum VRMessageOverlayResponse {
+        VRMessageOverlayResponse_ButtonPress_0 = 0,
+        VRMessageOverlayResponse_ButtonPress_1 = 1,
+        VRMessageOverlayResponse_ButtonPress_2 = 2,
+        VRMessageOverlayResponse_ButtonPress_3 = 3,
+        VRMessageOverlayResponse_CouldntFindSystemOverlay = 4,
+        VRMessageOverlayResponse_CouldntFindOrCreateClientOverlay = 5,
+        VRMessageOverlayResponse_ApplicationQuit = 6
+    };
+
+    export type VROverlayIntersectionParams_t = {
+        vSource: HmdVector3_t,
+        vDirection: HmdVector3_t,
+        eOrigin: ETrackingUniverseOrigin
+    }
+
+    export type VROverlayIntersectionResults_t = {
+        vPoint: HmdVector3_t,
+        vNormal: HmdVector3_t,
+        vUVs: HmdVector2_t,
+        fDistance: number
+    }
+
+    export enum EGamepadTextInputMode {
+        k_EGamepadTextInputModeNormal = 0,
+        k_EGamepadTextInputModePassword = 1,
+        k_EGamepadTextInputModeSubmit = 2,
+    };
+
+    export enum EGamepadTextInputLineMode {
+        k_EGamepadTextInputLineModeSingleLine = 0,
+        k_EGamepadTextInputLineModeMultipleLines = 1
+    };
+
+    export enum EVROverlayIntersectionMaskPrimitiveType {
+        OverlayIntersectionPrimitiveType_Rectangle,
+        OverlayIntersectionPrimitiveType_Circle,
+    };
+
+    export type IntersectionMaskRectangle_t = {
+        m_flTopLeftX: number,
+        m_flTopLeftY: number,
+        m_flWidth: number,
+        m_flHeight: number
+    }
+
+    export type IntersectionMaskCircle_t = {
+        m_flCenterX: number,
+        m_flCenterY: number,
+        m_flRadius: number
+    }
+
+    export type VROverlayIntersectionMaskPrimitive_Data_t = {
+        m_Rectangle: IntersectionMaskRectangle_t,
+        m_Circle: IntersectionMaskCircle_t
+    }
+
+    export type VROverlayIntersectionMaskPrimitive_t = {
+        m_nPrimitiveType: EVROverlayIntersectionMaskPrimitiveType,
+        m_Primitive: VROverlayIntersectionMaskPrimitive_Data_t
+    }
+
+    export enum EKeyboardFlags {
+        KeyboardFlag_Minimal = 1 << 0, // makes the keyboard send key events immediately instead of accumulating a buffer
+        KeyboardFlag_Modal = 2 << 0, // makes the keyboard take all focus and dismiss when clicking off the panel
+    };
+
+    export type VROverlayProjection_t = {
+        fLeft: number,
+        fRight: number,
+        fTop: number,
+        fBottom: number
+    }
+
+    export class IVROverlay {
+
+        // ---------------------------------------------
+        // Overlay management methods
+        // ---------------------------------------------
+
+        FindOverlay(OverlayKey: string): VROverlayHandle_t { return openvr.IVROverlay.FindOverlay(OverlayKey); }
+        CreateOverlay(OverlayKey: string, OverlayName: string): VROverlayHandle_t { return openvr.IVROverlay.CreateOverlay(OverlayKey, OverlayName); }
+        DestroyOverlay(OverlayHandle: VROverlayHandle_t): EVROverlayError { return openvr.IVROverlay.DestroyOverlay(OverlayHandle); }
+        GetOverlayKey(OverlayHandle: VROverlayHandle_t): string { return openvr.IVROverlay.GetOverlayKey(OverlayHandle); }
+        GetOverlayName(OverlayHandle: VROverlayHandle_t): string { return openvr.IVROverlay.GetOverlayName(OverlayHandle); }
+        SetOverlayName(OverlayHandle: VROverlayHandle_t, Name: string) { openvr.IVROverlay.SetOverlayName(OverlayHandle, Name); }
+        GetOverlayErrorNameFromEnum(error: EVROverlayError): string { return openvr.IVROverlay.GetOverlayErrorNameFromEnum(error); }
+
+        // ---------------------------------------------
+        // Overlay rendering methods
+        // ---------------------------------------------
+
+        SetOverlayRenderingPid(OverlayHandle: VROverlayHandle_t, PID: number) { openvr.IVROverlay.SetOverlayRenderingPid(OverlayHandle, PID); }
+        GetOverlayRenderingPid(OverlayHandle: VROverlayHandle_t): number { return openvr.IVROverlay.GetOverlayRenderingPid(OverlayHandle); }
+        SetOverlayFlag(OverlayHandle: VROverlayHandle_t, OverlayFlag: VROverlayFlags, Enabled: boolean) { return openvr.IVROverlay.SetOverlayFlag(OverlayHandle, OverlayFlag, Enabled); }
+        GetOverlayFlag(OverlayHandle: VROverlayHandle_t, OverlayFlag: VROverlayFlags) { return openvr.IVROverlay.GetOverlayFlag(OverlayHandle, OverlayFlag); }
+        GetOverlayFlags(OverlayHandle: VROverlayHandle_t) { return openvr.IVROverlay.GetOverlayFlags(OverlayHandle); }
+        SetOverlayColor(OverlayHandle: VROverlayHandle_t, Red: number, Green: number, Blue: number) { openvr.IVROverlay.SetOverlayColor(OverlayHandle, Red, Green, Blue); }
+        GetOverlayColor(OverlayHandle: VROverlayHandle_t): { Red: number, Green: number, Blue: number } { return openvr.IVROverlay.GetOverlayColor(OverlayHandle); }
+        SetOverlayAlpha(OverlayHandle: VROverlayHandle_t, Alpha: number) { openvr.IVROverlay.SetOverlayAlpha(OverlayHandle, Alpha); }
+        GetOverlayAlpha(OverlayHandle: VROverlayHandle_t): number { return openvr.IVROverlay.GetOverlayAlpha(OverlayHandle); }
+        SetOverlayTexelAspect(OverlayHandle: VROverlayHandle_t, TexelAspect: number) { openvr.IVROverlay.SetOverlayTexelAspect(OverlayHandle, TexelAspect); }
+        GetOverlayTexelAspect(OverlayHandle: VROverlayHandle_t): number { return openvr.IVROverlay.GetOverlayTexelAspect(OverlayHandle); }
+        SetOverlaySortOrder(OverlayHandle: VROverlayHandle_t, SortOrder: number) { openvr.IVROverlay.SetOverlaySortOrder(OverlayHandle, SortOrder); }
+        GetOverlaySortOrder(OverlayHandle: VROverlayHandle_t): number { return openvr.IVROverlay.GetOverlaySortOrder(OverlayHandle); }
+        SetOverlayWidthInMeters(OverlayHandle: VROverlayHandle_t, WidthInMeters: number) { openvr.IVROverlay.SetOverlayWidthInMeters(OverlayHandle, WidthInMeters); }
+        GetOverlayWidthInMeters(OverlayHandle: VROverlayHandle_t): number { return openvr.IVROverlay.GetOverlayWidthInMeters(OverlayHandle); }
+        SetOverlayCurvature(OverlayHandle: VROverlayHandle_t, Curvature: number) { openvr.IVROverlay.SetOverlayCurvature(OverlayHandle, Curvature); }
+        GetOverlayCurvature(OverlayHandle: VROverlayHandle_t): number { return openvr.IVROverlay.GetOverlayCurvature(OverlayHandle); }
+        SetOverlayTextureColorSpace(OverlayHandle: VROverlayHandle_t, TextureColorSpace: EColorSpace) { openvr.IVROverlay.SetOverlayTextureColorSpace(OverlayHandle, TextureColorSpace); }
+        GetOverlayTextureColorSpace(OverlayHandle: VROverlayHandle_t): EColorSpace { return openvr.IVROverlay.GetOverlayTextureColorSpace(OverlayHandle); }
+        SetOverlayTextureBounds(OverlayHandle: VROverlayHandle_t, OverlayTextureBounds: VRTextureBounds_t) { openvr.IVROverlay.SetOverlayTextureBounds(OverlayHandle, OverlayTextureBounds); }
+        GetOverlayTextureBounds(OverlayHandle: VROverlayHandle_t): VRTextureBounds_t { return openvr.IVROverlay.GetOverlayTextureBounds(OverlayHandle); }
+        GetOverlayTransformType(OverlayHandle: VROverlayHandle_t): VROverlayTransformType { return openvr.IVROverlay.GetOverlayTransformType(OverlayHandle); }
+        SetOverlayTransformAbsolute(OverlayHandle: VROverlayHandle_t, TrackingOrigin: ETrackingUniverseOrigin, TrackingOriginToOverlayTransform: HmdMatrix34_t) { openvr.IVROverlay.SetOverlayTransformAbsolute(OverlayHandle, TrackingOrigin, TrackingOriginToOverlayTransform); }
+        GetOverlayTransformAbsolute(OverlayHandle: VROverlayHandle_t): { TrackingOrigin: ETrackingUniverseOrigin, TrackingOriginToOverlayTransform: HmdMatrix34_t} { return openvr.IVROverlay.GetOverlayTransformAbsolute(OverlayHandle); }
+        SetOverlayTransformTrackedDeviceRelative(OverlayHandle: VROverlayHandle_t, TrackedDevice: TrackedDeviceIndex_t, TrackedDeviceToOverlayTransform: HmdMatrix34_t) { openvr.IVROverlay.SetOverlayTransformTrackedDeviceRelative(OverlayHandle, TrackedDevice, TrackedDeviceToOverlayTransform); }
+        GetOverlayTransformTrackedDeviceRelative(OverlayHandle: VROverlayHandle_t): { TrackedDevice: TrackedDeviceIndex_t, TrackedDeviceToOverlayTransform: HmdMatrix34_t} { return openvr.IVROverlay.GetOverlayTransformTrackedDeviceRelative(OverlayHandle); }
+        SetOverlayTransformTrackedDeviceComponent(OverlayHandle: VROverlayHandle_t, DeviceIndex: TrackedDeviceIndex_t, ComponentName: string) { openvr.IVROverlay.SetOverlayTransformTrackedDeviceComponent(OverlayHandle, DeviceIndex, ComponentName); }
+        GetOverlayTransformTrackedDeviceComponent(OverlayHandle: VROverlayHandle_t): { DeviceIndex: TrackedDeviceIndex_t, ComponentName: string } { return openvr.IVROverlay.GetOverlayTransformTrackedDeviceComponent(OverlayHandle); }
+        GetOverlayTransformOverlayRelative(OverlayHandle: VROverlayHandle_t): { OverlayHandleParent: VROverlayHandle_t, ParentOverlayToOverlayTransform: HmdMatrix34_t } { return openvr.IVROverlay.GetOverlayTransformOverlayRelative(OverlayHandle); }
+        SetOverlayTransformOverlayRelative(OverlayHandle: VROverlayHandle_t, OverlayHandleParent: VROverlayHandle_t, ParentOverlayToOverlayTransform: HmdMatrix34_t) { openvr.IVROverlay.SetOverlayTransformOverlayRelative(OverlayHandle, OverlayHandleParent, ParentOverlayToOverlayTransform); }
+        SetOverlayTransformCursor(OverlayHandle: VROverlayHandle_t, HotSpot: HmdVector2_t) { openvr.IVROverlay.SetOverlayTransformCursor(OverlayHandle, HotSpot); }
+        GetOverlayTransformCursor(OverlayHandle: VROverlayHandle_t): HmdVector2_t { return openvr.IVROverlay.GetOverlayTransformCursor(OverlayHandle); }
+        SetOverlayTransformProjection(OverlayHandle: VROverlayHandle_t, TrackingOrigin: ETrackingUniverseOrigin, TrackingOriginToOverlayTransform: HmdMatrix34_t, Projection: VROverlayProjection_t, eEye: EVREye) { openvr.IVROverlay.SetOverlayTransformProjection(OverlayHandle, TrackingOrigin, TrackingOriginToOverlayTransform, Projection, eEye); }
+        ShowOverlay(OverlayHandle: VROverlayHandle_t) { openvr.IVROverlay.ShowOverlay(OverlayHandle); }
+        HideOverlay(OverlayHandle: VROverlayHandle_t) { openvr.IVROverlay.HideOverlay(OverlayHandle); }
+        IsOverlayVisible(OverlayHandle: VROverlayHandle_t): boolean { return openvr.IVROverlay.IsOverlayVisible(OverlayHandle); }
+        GetTransformForOverlayCoordinates(OverlayHandle: VROverlayHandle_t, TrackingOrigin: ETrackingUniverseOrigin, CoordinatesInOverlay: HmdVector2_t): HmdMatrix34_t { return openvr.IVROverlay.GetTransformForOverlayCoordinates(OverlayHandle, TrackingOrigin, CoordinatesInOverlay); }
+
+        // ---------------------------------------------
+        // Overlay input methods
+        // ---------------------------------------------
+
+        PollNextOverlayEvent(OverlayHandle: VROverlayHandle_t): VREvent_t { return openvr.IVROverlay.PollNextOverlayEvent(OverlayHandle); }
+        GetOverlayInputMethod(OverlayHandle: VROverlayHandle_t): VROverlayInputMethod { return openvr.IVROverlay.GetOverlayInputMethod(OverlayHandle); }
+        SetOverlayInputMethod(OverlayHandle: VROverlayHandle_t, InputMethod: VROverlayInputMethod) { openvr.IVROverlay.SetOverlayInputMethod(OverlayHandle, InputMethod); }
+        GetOverlayMouseScale(OverlayHandle: VROverlayHandle_t): HmdVector2_t { return openvr.IVROverlay.GetOverlayMouseScale(OverlayHandle); }
+        SetOverlayMouseScale(OverlayHandle: VROverlayHandle_t, MouseScale: HmdVector2_t) { openvr.IVROverlay.SetOverlayMouseScale(OverlayHandle, MouseScale); }
+        ComputeOverlayIntersection(OverlayHandle: VROverlayHandle_t, Params: VROverlayIntersectionParams_t, Results: VROverlayIntersectionResults_t) { openvr.IVROverlay.ComputeOverlayIntersection(OverlayHandle, Params, Results); }
+        IsHoverTargetOverlay(OverlayHandle: VROverlayHandle_t): boolean { return openvr.IVROverlay.IsHoverTargetOverlay(OverlayHandle); }
+        TriggerLaserMouseHapticVibration(OverlayHandle: VROverlayHandle_t, DurationSeconds: number, Frequency: number, Amplitude: number ) { openvr.IVROverlay.TriggerLaserMouseHapticVibration(OverlayHandle, DurationSeconds, Frequency, Amplitude); }
+        SetOverlayCursor(OverlayHandle: VROverlayHandle_t, CursorHandle: VROverlayHandle_t) { openvr.IVROverlay.SetOverlayCursor(OverlayHandle, CursorHandle); }
+        SetOverlayCursorPositionOverride(OverlayHandle: VROverlayHandle_t, Cursor: HmdVector2_t) { openvr.IVROverlay.SetOverlayCursorPositionOverride(OverlayHandle, Cursor); }
+        ClearOverlayCursorPositionOverride(OverlayHandle: VROverlayHandle_t) { openvr.IVROverlay.ClearOverlayCursorPositionOverride(OverlayHandle); }
+
+        // ---------------------------------------------
+        // Overlay texture methods
+        // ---------------------------------------------
+
+        SetOverlayTexture(OverlayHandle: VROverlayHandle_t, Texture: Texture_t) { openvr.IVROverlay.SetOverlayTexture(OverlayHandle, Texture); }
+        ClearOverlayTexture(OverlayHandle: VROverlayHandle_t) { openvr.IVROverlay.ClearOverlayTexture(OverlayHandle); }
+        SetOverlayRaw(OverlayHandle: VROverlayHandle_t, Buffer: number, Width: number, Height: number, BytesPerPixel: number) { openvr.IVROverlay.SetOverlayRaw(OverlayHandle, Buffer, Width, Height, BytesPerPixel); }
+        SetOverlayFromFile(OverlayHandle: VROverlayHandle_t, FilePath: String) { openvr.IVROverlay.SetOverlayFromFile(OverlayHandle, FilePath); }
+        ReleaseNativeOverlayHandle(OverlayHandle: VROverlayHandle_t, NativeTextureHandle: number) { openvr.IVROverlay.ReleaseNativeOverlayHandle(OverlayHandle, NativeTextureHandle); }
+        GetOverlayTextureSize(OverlayHandle: VROverlayHandle_t): { Width: number, Height: number } { return openvr.IVROverlay.GetOverlayTextureSize(OverlayHandle); }
+
+        // ----------------------------------------------
+        // Dashboard Overlay Methods
+        // ----------------------------------------------
+
+        CreateDashboardOverlay(OverlayKey: string, OverlayFriendlyName: string): { MainHandle: number, ThumbnailHandle: number } { return openvr.IVROverlay.CreateDashboardOverlay(OverlayKey, OverlayFriendlyName); }
+        IsDashboardVisible(): boolean { return openvr.IVROverlay.IsDashboardVisible(); }
+        IsActiveDashboardOverlay(OverlayHandle: VROverlayHandle_t): boolean { return openvr.IVROverlay.IsActiveDashboardOverlay(OverlayHandle); }
+        SetDashboardOverlaySceneProcess(OverlayHandle: VROverlayHandle_t, ProcessId: number) { openvr.IVROverlay.SetDashboardOverlaySceneProcess(OverlayHandle, ProcessId); }
+        GetDashboardOverlaySceneProcess(OverlayHandle: VROverlayHandle_t): number { return openvr.IVROverlay.GetDashboardOverlaySceneProcess(OverlayHandle); }
+        ShowDashboard(OverlayToShow: string) { openvr.IVROverlay.ShowDashboard(OverlayToShow); }
+        GetPrimaryDashboardDevice(): TrackedDeviceIndex_t { return openvr.IVROverlay.GetPrimaryDashboardDevice(); }
+
+        // ---------------------------------------------
+        // Keyboard methods
+        // ---------------------------------------------
+
+        ShowKeyboard(InputMode: EGamepadTextInputMode, LineInputMode: EGamepadTextInputLineMode, Flags: number, Description: string, ExistingText: string, UserValue: number) { openvr.IVROverlay.ShowKeyboard(InputMode, LineInputMode, Flags, Description, ExistingText, UserValue); }
+        ShowKeyboardForOverlay(OverlayHandle: VROverlayHandle_t, InputMode: EGamepadTextInputMode, LineInputMode: EGamepadTextInputLineMode, Flags: number, Description: string, ExistingText: string, UserValue: number) { openvr.IVROverlay.ShowKeyboardForOverlay(OverlayHandle, InputMode, LineInputMode, Flags, Description, ExistingText, UserValue); }
+        GetKeyboardText(TextLength: number): string { return openvr.IVROverlay.GetKeyboardText(TextLength); }
+        HideKeyBoard() { openvr.IVROverlay.HideKeyBoard(); }
+        SetKeyboardTransformAbsolute(TrackingOrigin: ETrackingUniverseOrigin, TrackingOriginToKeyboardTransform: HmdMatrix34_t) { openvr.IVROverlay.SetKeyboardTransformAbsolute(TrackingOrigin, TrackingOriginToKeyboardTransform); }
+        SetKeyboardPositionForOverlay(OverlayHandle: VROverlayHandle_t, AvoidRect: HmdRect2_t) { openvr.IVROverlay.SetKeyboardPositionForOverlay(OverlayHandle, AvoidRect); }
+
+        // ---------------------------------------------
+        // Message box methods
+        // ---------------------------------------------
+
+        ShowMessageOverlay(Text: string, Caption: string, Button0Text: string, Button1Text?: string, Button2Text?: string, Button3Text?: string) {
+            if(Button1Text === undefined) openvr.IVROverlay.ShowMessageOverlay(Text, Caption, Button0Text);
+            else if(Button2Text === undefined) openvr.IVROverlay.ShowMessageOverlay(Text, Caption, Button0Text, Button1Text);
+            else if(Button3Text === undefined) openvr.IVROverlay.ShowMessageOverlay(Text, Caption, Button0Text, Button1Text, Button2Text);
+            else openvr.IVROverlay.ShowMessageOverlay(Text, Caption, Button0Text, Button1Text, Button2Text, Button3Text);
+        }
+        CloseMessageOverlay() { openvr.IVROverlay.CloseMessageOverlay(); }
     }
 }

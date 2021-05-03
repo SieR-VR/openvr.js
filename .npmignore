@@ -18,3 +18,7 @@ build/Release/openvr.pdb
 .gitmodules
 binding.gyp
 tsconfig.json
+yarn.lock
+
+babel.config.js
+jest.config.js

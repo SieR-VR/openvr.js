@@ -36,4 +36,6 @@ void VR_GetVRInitErrorAsEnglishDescription(const Nan::FunctionCallbackInfo<Value
 /// VR_INTERFACE uint32_t VR_CALLTYPE VR_GetInitToken();
 void VR_GetInitToken(const Nan::FunctionCallbackInfo<Value>& info);
 
+void IVROverlay_Init(const Nan::FunctionCallbackInfo<Value>& info);
+
 #endif
