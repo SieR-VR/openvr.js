@@ -1,24 +1,11 @@
 #! .npmignore
-src
 tssrc
 openvr
 .vscode
 node_modules
 
-build/binding.sln
-build/config.gypi
-build/openvr.vcxproj
-build/openvr.vcxproj.filters
-build/Release/obj
-build/Release/openvr.exp
-build/Release/openvr.lib
-build/Release/openvr.pdb
+build
 
 .gitignore
 .gitmodules
-binding.gyp
 tsconfig.json
-yarn.lock
-
-babel.config.js
-jest.config.js
