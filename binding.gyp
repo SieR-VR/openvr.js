@@ -17,11 +17,11 @@
             ],
             'include_dirs': [
                 "<!(node -e \"require('nan')\")",
-                '<(module_root_dir)/include',
+                '<(module_root_dir)/openvr/',
             ],
             'conditions': [
                 ['OS=="win"', {
-                    'library_dirs': ['<(module_root_dir)/lib/'],
+                    'library_dirs': ['<(module_root_dir)/openvr/'],
                     'libraries': ['openvr_api.lib'],
                     'defines': ['WIN32_LEAN_AND_MEAN', 'VC_EXTRALEAN', 'NOMINMAX'],
                     'msvs_settings': {
@@ -31,13 +31,7 @@
                         'VCLinkerTool': {
                             'AdditionalOptions': ['/OPT:REF','/OPT:ICF','/LTCG'],
                         },
-                    },
-                    'copies': [
-                        {
-                            'destination': '<(module_root_dir)/build/Release/',
-                            'files': ['<(module_root_dir)/bin/openvr_api.dll']
-                        }
-                    ]
+                    }
                 }]
             ]
         }

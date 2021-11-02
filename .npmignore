@@ -1,11 +1,9 @@
 #! .npmignore
 tssrc
-openvr
 .vscode
 node_modules
 
 build
 
 .gitignore
-.gitmodules
 tsconfig.json

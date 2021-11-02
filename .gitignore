@@ -1,8 +1,7 @@
 # modules
 /node_modules
-/build
-/.vscode
-/dist
 
+# build result
+/build
 index.d.ts
 index.js
