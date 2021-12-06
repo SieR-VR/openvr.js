@@ -96,27 +96,10 @@
           "OS=='linux'",
           {
             "libraries": [
-              "-lopenvr_api",
-              "-L<(module_root_dir)/openvr/lib/"
+              "<(module_root_dir)/openvr/lib/libopenvr_api.so"
             ],
             "defines": [
               "LINUX"
-            ],
-            "actions": [
-              {
-                "action_name": "copy_openvr_libs",
-                "inputs": [
-                  "<(module_root_dir)/openvr/bin/libopenvr_api.so"
-                ],
-                "outputs": [
-                  "<(module_root_dir)/build/Release/libopenvr_api.so"
-                ],
-                "action": [
-                  "cp",
-                  "<@(_inputs)",
-                  "<@(_outputs)"
-                ]
-              }
             ]
           }
         ]
