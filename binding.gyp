@@ -9,11 +9,12 @@
         {
             'target_name': 'openvr',
             'sources': [
+                'src/ivrsystem.cpp',
+                'src/ivroverlay.cpp',
+                'src/ivrdebug.cpp',
                 'src/bindings.cpp',
                 'src/util.cpp',
-                'src/ivrsystem.cpp',
                 'src/openvr.cpp',
-                'src/ivroverlay.cpp',
             ],
             'include_dirs': [
                 "<!(node -e \"require('nan')\")",
