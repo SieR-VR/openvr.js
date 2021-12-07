@@ -2,7 +2,6 @@
   "compileOnSave": false,
   "compilerOptions": {
     "target": "ES5",
-    "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
