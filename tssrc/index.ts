@@ -94,13 +94,12 @@ export const IsRoleAllowedAsHand = function (eRole: ETrackedControllerRole): boo
     }
 }
 export type TrackedDevicePose_t = {
-    mDeviceToAbsoluteTracking: HmdMatrix34_t;
-    vVelocity: HmdVector3_t;
-    VAngularVelocity: HmdVector3_t;
-    eTrackingResult: ETrackingResult;
-    bPoseIsValid: boolean;
-
-    bDeviceIsConnected: boolean;
+    deviceToAbsoluteTracking: HmdMatrix34_t;
+    velocity: HmdVector3_t;
+    angularVelocity: HmdVector3_t;
+    trackingResult: ETrackingResult;
+    poseIsValid: boolean;
+    deviceIsConnected: boolean;
 }
 export enum ETrackingUniverseOrigin {
     TrackingUniverseSeated = 0,
