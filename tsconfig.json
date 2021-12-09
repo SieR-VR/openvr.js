@@ -16,5 +16,8 @@
     "isolatedModules": true,
     "noEmit": false,
     "outDir": ""
-  }
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }

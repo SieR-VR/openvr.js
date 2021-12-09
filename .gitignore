@@ -5,3 +5,6 @@
 /build
 index.d.ts
 index.js
+
+# test
+/test/assets

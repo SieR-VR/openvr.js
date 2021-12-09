@@ -1706,7 +1706,7 @@ export class IVROverlay {
 
     SetOverlayTexture(OverlayHandle: VROverlayHandle_t, Texture: Texture_t) { openvr.IVROverlay.SetOverlayTexture(OverlayHandle, Texture); }
     ClearOverlayTexture(OverlayHandle: VROverlayHandle_t) { openvr.IVROverlay.ClearOverlayTexture(OverlayHandle); }
-    SetOverlayRaw(OverlayHandle: VROverlayHandle_t, Buffer: number, Width: number, Height: number, BytesPerPixel: number) { openvr.IVROverlay.SetOverlayRaw(OverlayHandle, Buffer, Width, Height, BytesPerPixel); }
+    SetOverlayRaw(OverlayHandle: VROverlayHandle_t, Buffer: Buffer, Width: number, Height: number, BytesPerPixel: number) { openvr.IVROverlay.SetOverlayRaw(OverlayHandle, Buffer, Width, Height, BytesPerPixel); }
     SetOverlayFromFile(OverlayHandle: VROverlayHandle_t, FilePath: String) { openvr.IVROverlay.SetOverlayFromFile(OverlayHandle, FilePath); }
     ReleaseNativeOverlayHandle(OverlayHandle: VROverlayHandle_t, NativeTextureHandle: number) { openvr.IVROverlay.ReleaseNativeOverlayHandle(OverlayHandle, NativeTextureHandle); }
     GetOverlayTextureSize(OverlayHandle: VROverlayHandle_t): { Width: number, Height: number } { return openvr.IVROverlay.GetOverlayTextureSize(OverlayHandle); }
@@ -1715,7 +1715,7 @@ export class IVROverlay {
     // Dashboard Overlay Methods
     // ----------------------------------------------
 
-    CreateDashboardOverlay(OverlayKey: string, OverlayFriendlyName: string): { MainHandle: number, ThumbnailHandle: number } { return openvr.IVROverlay.CreateDashboardOverlay(OverlayKey, OverlayFriendlyName); }
+    CreateDashboardOverlay(OverlayKey: string, OverlayFriendlyName: string): { MainHandle: VROverlayHandle_t, ThumbnailHandle: VROverlayHandle_t } { return openvr.IVROverlay.CreateDashboardOverlay(OverlayKey, OverlayFriendlyName); }
     IsDashboardVisible(): boolean { return openvr.IVROverlay.IsDashboardVisible(); }
     IsActiveDashboardOverlay(OverlayHandle: VROverlayHandle_t): boolean { return openvr.IVROverlay.IsActiveDashboardOverlay(OverlayHandle); }
     SetDashboardOverlaySceneProcess(OverlayHandle: VROverlayHandle_t, ProcessId: number) { openvr.IVROverlay.SetDashboardOverlaySceneProcess(OverlayHandle, ProcessId); }

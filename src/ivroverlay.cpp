@@ -1146,7 +1146,7 @@ void IVROverlay::SetOverlayRaw(const Nan::FunctionCallbackInfo<Value> &info)
     IVROverlay *obj = Nan::ObjectWrap::Unwrap<IVROverlay>(info.Holder());
 
     vr::VROverlayHandle_t ulOverlayHandle = decode<vr::VROverlayHandle_t>(info[0], info.GetIsolate());
-    void *pvBuffer = (void *)(uintptr_t)(info[1]->Int32Value(context).FromJust());
+    void *pvBuffer = node::Buffer::Data(info[1]->ToObject(context).ToLocalChecked());
     uint32_t unWidth = info[2]->Uint32Value(context).FromJust();
     uint32_t unHeight = info[3]->Uint32Value(context).FromJust();
     uint32_t unBytesPerPixel = info[4]->Uint32Value(context).FromJust();
