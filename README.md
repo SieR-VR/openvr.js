@@ -4,14 +4,17 @@
     </a>
 </p>
 
+# This library is NOT for Web!
 
 ## Table of contents
-- [Quick start](#quick-start)
-- [Status](#status)
-- [Bugs and pull requests](#bugs-and-pull-requests)
-- [Contributing](#contributing)
-- [Creators](#creators)
-- [Copyright and license](#copyright-and-license)
+- [This library is NOT for Web!](#this-library-is-not-for-web)
+  - [Table of contents](#table-of-contents)
+  - [Quick start](#quick-start)
+  - [Status](#status)
+  - [Bugs and pull requests](#bugs-and-pull-requests)
+  - [Contributing](#contributing)
+  - [Creators](#creators)
+  - [Copyright and license](#copyright-and-license)
 
 ## Quick start
 

@@ -1,6 +1,6 @@
 {
   "name": "openvr.js",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "An implementation of OpenVR in Node.js",
   "main": "./index.js",
   "typings": "./index.d.ts",

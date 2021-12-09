@@ -4,6 +4,9 @@ tssrc
 node_modules
 
 build
+readme
 
 .gitignore
 tsconfig.json
+
+test
