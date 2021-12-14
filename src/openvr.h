@@ -38,4 +38,6 @@ void VR_GetInitToken(const Nan::FunctionCallbackInfo<Value>& info);
 
 void IVROverlay_Init(const Nan::FunctionCallbackInfo<Value>& info);
 
+void IVRApplications_Init(const Nan::FunctionCallbackInfo<Value>& info);
+
 #endif

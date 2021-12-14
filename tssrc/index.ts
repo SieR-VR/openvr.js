@@ -1404,6 +1404,7 @@ export const VR_GetVRInitErrorAsEnglishDescription = function (error: EVRInitErr
 export const VR_GetInitToken = function (): number { return openvr.VR_GetInitToken(); }
 
 export const IVROverlay_Init = function (): IVROverlay { return openvr.IVROverlay_Init(); }
+export const IVRApplications_Init = function (): IVRApplications { return openvr.IVRApplications_Init(); }
 
 
 export class IVRSystem {
@@ -1744,4 +1745,23 @@ export class IVROverlay {
         else openvr.IVROverlay.ShowMessageOverlay(Text, Caption, Button0Text, Button1Text, Button2Text, Button3Text);
     }
     CloseMessageOverlay() { openvr.IVROverlay.CloseMessageOverlay(); }
+}
+
+export class IVRApplications {
+
+    // ---------------------------------------------
+    // Application management
+    // ---------------------------------------------
+
+    AddApplicationManifest(applicationManifestFullPath : string, temporary = false) : void {
+        openvr.IVRApplications.AddApplicationManifest(applicationManifestFullPath, temporary);
+    }
+
+    RemoveApplicationManifest(applicationManifestFullPath : string) : void {
+        openvr.IVRApplications.RemoveApplicationManifest(applicationManifestFullPath);
+    }
+
+    IsApplicationInstalled(appKey : string) : boolean {
+        return openvr.IVRApplications.IsApplicationInstalled(appKey);
+    }
 }

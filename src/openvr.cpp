@@ -1,6 +1,7 @@
 #include "openvr.h"
 #include "ivrsystem.h"
 #include "ivroverlay.h"
+#include "ivrapplications.h"
 
 #include <node.h>
 #include <openvr.h>
@@ -90,5 +91,11 @@ void VR_GetInitToken(const Nan::FunctionCallbackInfo<Value> &info)
 void IVROverlay_Init(const Nan::FunctionCallbackInfo<Value>& info)
 {
     auto result = IVROverlay::NewInstance(vr::VROverlay());
+    info.GetReturnValue().Set(result);
+}
+
+void IVRApplications_Init(const Nan::FunctionCallbackInfo<Value>& info)
+{
+    auto result = IVRApplications::NewInstance(vr::VRApplications());
     info.GetReturnValue().Set(result);
 }
