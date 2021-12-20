@@ -5,6 +5,8 @@
 #include <node.h>
 #include <openvr.h>
 
+Nan::Persistent<Function> IVRApplications::constructor;
+
 void IVRApplications::Init(Local<Object> exports)
 {
     Local<Context> context = exports->CreationContext();
@@ -22,7 +24,7 @@ void IVRApplications::Init(Local<Object> exports)
     exports->Set(
         context,
         Nan::New("IVRApplications").ToLocalChecked(),
-        tpl->GetFunction(context).ToLocalChecked());
+        tpl->GetFunction(context).ToLocalChecked()).FromJust();
 }
 
 Local<Object> IVRApplications::NewInstance(vr::IVRApplications *applications)
@@ -68,7 +70,7 @@ void IVRApplications::AddApplicationManifest(const Nan::FunctionCallbackInfo<Val
 
     vr::EVRApplicationError error = obj->self_->AddApplicationManifest(pchApplicationManifestFullPath, bTemporary);
 
-    if (error != vr::EVRApplicationError_None)
+    if (error != vr::EVRApplicationError::VRApplicationError_None)
     {
         Nan::ThrowError(obj->self_->GetApplicationsErrorNameFromEnum(error));
         return;
@@ -85,7 +87,7 @@ void IVRApplications::RemoveApplicationManifest(const Nan::FunctionCallbackInfo<
 
     vr::EVRApplicationError error = obj->self_->RemoveApplicationManifest(pchApplicationManifestFullPath);
 
-    if (error != vr::EVRApplicationError_None)
+    if (error != vr::EVRApplicationError::VRApplicationError_None)
     {
         Nan::ThrowError(obj->self_->GetApplicationsErrorNameFromEnum(error));
         return;

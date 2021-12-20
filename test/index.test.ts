@@ -9,7 +9,7 @@ test("pngjs_test", () => {
     const overlay = vr.IVROverlay_Init();
     const { MainHandle, ThumbnailHandle } = overlay.CreateDashboardOverlay("test", "test");
 
-    const pngBufferRaw = fs.readFileSync(__dirname + "assets/test.png");
+    const pngBufferRaw = fs.readFileSync(__dirname + "/assets/test.png");
     const pngBuffer = PNG.sync.read(pngBufferRaw);
 
     const pixelBuffer = Buffer.from(pngBuffer.data);

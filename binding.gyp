@@ -26,6 +26,7 @@
       "sources": [
         "src/ivrsystem.cpp",
         "src/ivroverlay.cpp",
+        "src/ivrapplications.cpp",
         "src/ivrdebug.cpp",
         "src/bindings.cpp",
         "src/util.cpp",
