@@ -31,7 +31,7 @@ Local<Object> IVRApplications::NewInstance(vr::IVRApplications *applications)
 {
     Nan::EscapableHandleScope scope;
     Local<Function> cons = Nan::New(constructor);
-    Local<Value> argv[1] = {Nan::New<External>(system)};
+    Local<Value> argv[1] = {Nan::New<External>(applications)};
     return scope.Escape(Nan::NewInstance(cons, 1, argv).ToLocalChecked());
 }
 
