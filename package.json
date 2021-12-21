@@ -1,9 +1,9 @@
 {
   "name": "openvr.js",
-  "version": "0.3.7",
+  "version": "0.3.9",
   "description": "An implementation of OpenVR in Node.js",
-  "main": "./index.js",
-  "typings": "./index.d.ts",
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "test": "jest"

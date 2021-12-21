@@ -15,9 +15,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": false,
-    "outDir": ""
+    "rootDir": "./tssrc",
+    "outDir": "./dist",
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "test",
+    "dist"
   ]
 }

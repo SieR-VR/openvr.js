@@ -3,8 +3,7 @@
 
 # build result
 /build
-index.d.ts
-index.js
+/dist
 
 # test
 /test/assets
