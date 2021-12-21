@@ -1,6 +1,6 @@
 <p align="center">
     <a>
-        <img src="https://raw.githubusercontent.com/SieR-VR/openvr.js/master/logo/openvr.js.png" width=600>
+        <img src="https://raw.githubusercontent.com/SieR-VR/openvr.js/master/readme/openvr.js.png" width=600>
     </a>
 </p>
 
